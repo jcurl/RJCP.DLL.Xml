@@ -1,0 +1,7 @@
+﻿<rootElement>
+  <devices>
+    <device name="headunit">
+      <element>Text</element>
+    </device>
+  </devices>
+</rootElement>
