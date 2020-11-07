@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<disks>
+  <volume>
+    <volumeinfo>
+      <volumeextent>
+        <device>\\.\PhysicalDrive2</device>
+        <offset>28672</offset>
+        <length>10732175360</length>
+      </volumeextent>
+      <volumeextent>
+        <device>\\.\PhysicalDrive1</device>
+        <offset>28672</offset>
+        <length>10732175360</length>
+      </volumeextent>
+      <recordedtime>2020-11-07 18:55:24Z</recordedtime>
+    </volumeinfo>
+    <recordedtime>2020-11-07 18:55:24Z</recordedtime>
+  </volume>
+</disks>

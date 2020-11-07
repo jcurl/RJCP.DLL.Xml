@@ -329,7 +329,7 @@ The default behavior is defined with:
 ```csharp
 new XmlTreeSettings() {
   ThrowOnUnknownElement = false,
-  THrowOnUnhandledText = true
+  ThrowOnUnhandledText = true
 }
 ```
 

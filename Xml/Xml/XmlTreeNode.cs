@@ -182,6 +182,18 @@
         /// </remarks>
         public XmlProcessing ProcessElement { get; set; }
 
+        private void InternalOnProcessElement(XmlNodeEventArgs args)
+        {
+            try {
+                OnProcessElement(args);
+            } catch (XmlException) {
+                throw;
+            } catch (Exception ex) {
+                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Handles the <see cref="ProcessElement" /> delegate.
         /// </summary>
@@ -191,14 +203,7 @@
             XmlProcessing handler = ProcessElement;
             if (handler == null) return;
 
-            try {
-                handler(this, args);
-            } catch (XmlException) {
-                throw;
-            } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
-                throw;
-            }
+            handler(this, args);
         }
 
         /// <summary>
@@ -229,6 +234,18 @@
         /// </remarks>
         public XmlProcessing ProcessUnknownElement { get; set; }
 
+        private bool InternalOnProcessUnknownElement(XmlNodeEventArgs args)
+        {
+            try {
+                return OnProcessUnknownElement(args);
+            } catch (XmlException) {
+                throw;
+            } catch (Exception ex) {
+                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Handles the <see cref="ProcessUnknownElement"/> delegate.
         /// </summary>
@@ -247,15 +264,8 @@
                 return false;
             }
 
-            try {
-                handler(this, args);
-                return true;
-            } catch (XmlException) {
-                throw;
-            } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
-                throw;
-            }
+            handler(this, args);
+            return true;
         }
 
         /// <summary>
@@ -271,6 +281,18 @@
         /// </remarks>
         public XmlProcessing ProcessTextElement { get; set; }
 
+        private void InternalOnProcessTextElement(XmlNodeEventArgs args)
+        {
+            try {
+                OnProcessTextElement(args);
+            } catch (XmlException) {
+                throw;
+            } catch (Exception ex) {
+                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Handles the <see cref="ProcessTextElement" /> delegate.
         /// </summary>
@@ -284,14 +306,7 @@
                 return;
             }
 
-            try {
-                handler(this, args);
-            } catch (XmlException) {
-                throw;
-            } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
-                throw;
-            }
+            handler(this, args);
         }
 
         /// <summary>
@@ -307,6 +322,18 @@
         /// </remarks>
         public XmlProcessing ProcessEndElement { get; set; }
 
+        private void InternalOnProcessEndElement(XmlNodeEventArgs args)
+        {
+            try {
+                OnProcessEndElement(args);
+            } catch (XmlException) {
+                throw;
+            } catch (Exception ex) {
+                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                throw;
+            }
+        }
+
         /// <summary>
         /// Handles the <see cref="ProcessEndElement" /> delegate.
         /// </summary>
@@ -316,14 +343,7 @@
             XmlProcessing handler = ProcessEndElement;
             if (handler == null) return;
 
-            try {
-                handler(this, args);
-            } catch (XmlException) {
-                throw;
-            } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
-                throw;
-            }
+            handler(this, args);
         }
 
         private struct XmlStackEntry
@@ -444,7 +464,7 @@
                     }
                     break;
                 case XmlNodeType.Text:
-                    if (node != null) node.OnProcessTextElement(xmlArgs);
+                    if (node != null) node.InternalOnProcessTextElement(xmlArgs);
                     break;
                 case XmlNodeType.EndElement:
                     if (node == null) {
@@ -461,7 +481,7 @@
                             reader.Depth, reader.Name, xmlStack.Count + initialDepth, entry.Name);
 
                     if (reader.Name.Equals(entry.Name)) {
-                        node.OnProcessEndElement(xmlArgs);
+                        node.InternalOnProcessEndElement(xmlArgs);
                         node = entry.Node;
                         if (node == null) {
                             // We've finished parsing the root node found of this tree. Return, so the user can
@@ -501,17 +521,17 @@
             object currentObject = xmlArgs.UserObject;
             bool isEmpty = reader.IsEmptyElement;
 
-            childNode.OnProcessElement(xmlArgs);
+            childNode.InternalOnProcessElement(xmlArgs);
             if (reader.NodeType == XmlNodeType.Attribute) reader.MoveToElement();
 
             if (xmlPos.IsMoved(reader)) {
                 skip = PostProcessElement(reader, ref xmlPos, xmlStack);
-                childNode.OnProcessEndElement(xmlArgs);
+                childNode.InternalOnProcessEndElement(xmlArgs);
                 xmlArgs.UserObject = currentObject;
             } else {
                 skip = false;
                 if (isEmpty) {
-                    childNode.OnProcessEndElement(xmlArgs);
+                    childNode.InternalOnProcessEndElement(xmlArgs);
                     xmlArgs.UserObject = currentObject;
                 } else {
                     // Traverse the next child node
@@ -534,7 +554,7 @@
             XmlPosition xmlPos = new XmlPosition(reader);
             object currentObject = xmlArgs.UserObject;
 
-            if (node.OnProcessUnknownElement(xmlArgs)) {
+            if (node.InternalOnProcessUnknownElement(xmlArgs)) {
                 if (reader.NodeType == XmlNodeType.Attribute) reader.MoveToElement();
 
                 if (xmlPos.IsMoved(reader)) {
