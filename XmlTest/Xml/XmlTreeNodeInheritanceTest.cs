@@ -6,7 +6,7 @@
     using System.IO;
     using System.Xml;
     using NUnit.Framework;
-    using RJCP.CodeQuality.NUnitExtensions;
+    using CodeQuality.NUnitExtensions;
 
     [TestFixture]
     public class XmlTreeNodeInheritanceTest
