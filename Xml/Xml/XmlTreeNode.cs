@@ -668,8 +668,6 @@
         /// </param>
         /// <param name="xmlns">The dictionary where the key is the prefix, and the value is the namespace.</param>
         /// <returns>An <see cref="XmlNamespaceManager"/> that can be used for mapping top level namespaces.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S1168:Empty arrays and collections should be returned instead of null",
-            Justification = "Not considered a collection in this context")]
         protected static XmlNamespaceManager GetXmlNsMgr(XmlReader reader, IDictionary<string, string> xmlns)
         {
             if (xmlns == null || xmlns.Count == 0) return null;
