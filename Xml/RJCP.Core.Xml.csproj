@@ -1,43 +1,59 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DCC494EC-25C4-466E-95FF-0DCBF92C95D5}</ProjectGuid>
+    <TargetFrameworks>net40;netstandard2.1</TargetFrameworks>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RJCP.Core</RootNamespace>
+    <Configurations>Debug;Release</Configurations>
+    <NeutralLanguage>en-US</NeutralLanguage>
+
     <AssemblyName>RJCP.Core.Xml</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <AssemblyTitle>RJCP.Core.Xml</AssemblyTitle>
+    <Product>RJCP.Core.Xml</Product>
+    <RootNamespace>RJCP.Core</RootNamespace>
+
+    <Authors>Jason Curl</Authors>
+    <Copyright>(C) 2019-2021, Jason Curl</Copyright>
+    <Company></Company>
+    <PackageId>RJCP.Core.Xml</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/jcurl</PackageProjectUrl>
+    
+    <Description>.NET library for useful XML functions.</Description>
+    <Version>0.2.0</Version>
+
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>Default</AnalysisMode>
+    <AnalysisLevel>latest</AnalysisLevel>
+
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug'">
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release'">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\RJCP.Core.Xml.xml</DocumentationFile>
   </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="GlobalSuppressions.cs" />
+    <ProjectReference Include="../../datastructures/Datastructures/RJCP.Core.Datastructures.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xml\XmlExtensions.cs" />
     <Compile Include="Xml\XmlLineInfo.cs" />
@@ -47,11 +63,10 @@
     <Compile Include="Xml\XmlTreeReader.cs" />
     <Compile Include="Xml\XmlTreeSettings.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\datastructures\Datastructures\RJCP.Core.Datastructures.csproj">
-      <Project>{bbb453b0-5024-4ff6-a323-7c2d711e4936}</Project>
-      <Name>RJCP.Core.Datastructures</Name>
-    </ProjectReference>
+    <None Include="..\LICENSE.md" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

@@ -3,8 +3,8 @@
     using System;
     using System.IO;
     using System.Xml;
-    using NUnit.Framework;
     using CodeQuality.NUnitExtensions;
+    using NUnit.Framework;
 
     [TestFixture]
     public class XmlExtensionsTest

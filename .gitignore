@@ -1,5 +1,9 @@
-/.vs
-*.user
+/.vs/
+/packages/
 bin/
 obj/
-packages/
+TestResults/
+*~
+*.user
+*.userprefs
+*.suo
