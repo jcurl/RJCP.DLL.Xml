@@ -29,7 +29,7 @@
             public bool HasLineInfo() { return m_HasLineInfo; }
         }
 
-        private void ReadElement(Action<XmlReader> testAction)
+        private static void ReadElement(Action<XmlReader> testAction)
         {
             string path = Path.Combine(Deploy.TestDirectory, "TestResources", "SampleXml.xml");
 

@@ -54,6 +54,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Xml\XmlExtensionsTest.cs" />
     <Compile Include="Xml\XmlNodeListTest.cs" />
     <Compile Include="Xml\XmlTreeNodeInheritanceTest.cs" />
