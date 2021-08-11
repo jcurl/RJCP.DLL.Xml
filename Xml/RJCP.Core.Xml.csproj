@@ -50,6 +50,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="RJCP.MSBuildTasks" Version="0.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../datastructures/Datastructures/RJCP.Core.Datastructures.csproj" />
   </ItemGroup>
 
