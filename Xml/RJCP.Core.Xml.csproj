@@ -19,8 +19,8 @@
     <PackageId>RJCP.Core.Xml</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageProjectUrl>https://github.com/jcurl</PackageProjectUrl>
-    
+    <PackageProjectUrl>https://github.com/jcurl/RJCP.DLL.Xml</PackageProjectUrl>
+
     <Description>.NET library for useful XML functions.</Description>
     <Version>0.2.0</Version>
 
