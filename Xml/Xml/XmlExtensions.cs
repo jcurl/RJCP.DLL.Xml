@@ -245,14 +245,22 @@
             foreach (char c in input) {
                 if (!IsValidXml10(c)) {
                     if (sb == null) sb = new StringBuilder(input.Length + 128);
+#if NETFRAMEWORK
                     if (pos > cp) sb.Append(input.Substring(cp, pos - cp));
+#else
+                    if (pos > cp) sb.Append(input.AsSpan(cp, pos - cp));
+#endif
                     cp = pos + 1;
                     sb.Append(EncodeChar(c));
                 }
                 pos++;
             }
             if (sb == null) return input;
+#if NETFRAMEWORK
             if (pos > cp) sb.Append(input.Substring(cp, pos - cp));
+#else
+            if (pos > cp) sb.Append(input.AsSpan(cp, pos - cp));
+#endif
             return sb.ToString();
         }
 

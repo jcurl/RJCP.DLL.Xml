@@ -55,8 +55,13 @@
                 Prefix = string.Empty;
                 LocalName = nodeName;
             } else if (prefixSep != 0 && nodeName.Length - prefixSep > 1) {
+#if NETFRAMEWORK
                 Prefix = nodeName.Substring(0, prefixSep);
                 LocalName = nodeName.Substring(prefixSep + 1);
+#else
+                Prefix = nodeName[..prefixSep];
+                LocalName = nodeName[(prefixSep + 1)..];
+#endif
                 if (LocalName.IndexOf(':') != -1) ThrowInvalidNodeName(nodeName, nameof(nodeName));
                 if (string.IsNullOrWhiteSpace(Prefix)) ThrowInvalidNodeName(nodeName, nameof(nodeName));
                 if (string.IsNullOrWhiteSpace(LocalName)) ThrowInvalidNodeName(nodeName, nameof(nodeName));
@@ -658,7 +663,6 @@
         {
             return GetXmlNsMgr(null, xmlns);
         }
-
 
         /// <summary>
         /// Creates an XML Namespace Manager given a dictionary of namespaces.

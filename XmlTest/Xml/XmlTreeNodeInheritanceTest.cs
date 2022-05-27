@@ -19,7 +19,11 @@
         private static long GetLong(string value)
         {
             if (value.StartsWith("0x")) {
+#if NETFRAMEWORK
                 return long.Parse(value.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+#else
+                return long.Parse(value.AsSpan(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+#endif
             }
 
             return long.Parse(value, CultureInfo.InvariantCulture);
@@ -31,7 +35,6 @@
 
             public IList<VolumeInfo> VolumeInfo { get; } = new List<VolumeInfo>();
         }
-
 
         private class VolumeInfo
         {
