@@ -244,10 +244,11 @@
             int cp = 0;
             foreach (char c in input) {
                 if (!IsValidXml10(c)) {
-                    if (sb == null) sb = new StringBuilder(input.Length + 128);
 #if NETFRAMEWORK
+                    if (sb == null) sb = new StringBuilder(input.Length + 128);
                     if (pos > cp) sb.Append(input.Substring(cp, pos - cp));
 #else
+                    sb ??= new StringBuilder(input.Length + 128);
                     if (pos > cp) sb.Append(input.AsSpan(cp, pos - cp));
 #endif
                     cp = pos + 1;
