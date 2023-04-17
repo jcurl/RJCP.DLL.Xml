@@ -638,6 +638,7 @@
                     }
                     break;
                 case XmlNodeType.Whitespace:
+                case XmlNodeType.Comment:
                     if (delta < 0 || delta > 1)
                         reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed",
                             xmlPos.NodeName);

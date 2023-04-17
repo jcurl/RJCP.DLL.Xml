@@ -1,6 +1,7 @@
 ﻿namespace RJCP.Core.Xml
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Xml;
@@ -1268,6 +1269,142 @@
             Assert.That(value, Is.EqualTo("Text"));
             Assert.That(unknown, Is.EqualTo("d"));
             Assert.That(valued, Is.EqualTo("Text2"));
+        }
+
+        private static IEnumerable SkipXmlData()
+        {
+            TestCaseData data;
+
+            data = new TestCaseData("<a><b><c>Text</c></b><b id='1'><c>Text1</c></b></a>");
+            yield return data;
+
+            data = new TestCaseData(
+                "<a>\n" +
+                " <b>\n" +
+                "  <c>Text</c>\n" +
+                " </b>\n" +
+                " <b id='1'>\n" +
+                "  <c>Text1</c>\n" +
+                " </b>\n" +
+                "</a>");
+            yield return data;
+
+            data = new TestCaseData(
+                "<a>\n" +
+                " <b>\n" +
+                "  <c>Text</c>\n" +
+                "  <!-- comment -->\n" +
+                " </b>\n" +
+                " <!-- comment -->\n" +
+                " <b id='1'>\n" +
+                "  <!-- comment -->\n" +
+                "  <c>Text1</c>\n" +
+                "  <!-- comment -->\n" +
+                " </b>\n" +
+                "</a>");
+            yield return data;
+        }
+
+        [Test, TestCaseSource(nameof(SkipXmlData))]
+        public void SkipInternalElement_Skip(string xml)
+        {
+            List<string> values = new List<string>();
+            XmlTreeReader reader = new XmlTreeReader() {
+                Nodes = {
+                    new XmlTreeNode("a") {
+                        Nodes = {
+                            new XmlTreeNode("b") {
+                                ProcessElement = (n, e) => {
+                                    string key = e.Reader["id"];
+                                    if (key == null) {
+                                        e.Reader.Skip();
+                                        return;
+                                    }
+                                },
+                                Nodes = {
+                                    new XmlTreeNode("c") {
+                                        ProcessTextElement = (n, e) => {
+                                            values.Add(e.Reader.Value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            reader.Read(new StringReader(xml));
+            Assert.That(values.Count, Is.EqualTo(1));
+            Assert.That(values[0], Is.EqualTo("Text1"));
+        }
+
+        [TestCaseSource(nameof(SkipXmlData))]
+        public void SkipInternalElement_SkipToEndElement(string xml)
+        {
+            List<string> values = new List<string>();
+            XmlTreeReader reader = new XmlTreeReader() {
+                Nodes = {
+                    new XmlTreeNode("a") {
+                        Nodes = {
+                            new XmlTreeNode("b") {
+                                ProcessElement = (n, e) => {
+                                    string key = e.Reader["id"];
+                                    if (key == null) {
+                                        e.Reader.SkipToEndElement();
+                                        return;
+                                    }
+                                },
+                                Nodes = {
+                                    new XmlTreeNode("c") {
+                                        ProcessTextElement = (n, e) => {
+                                            values.Add(e.Reader.Value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            reader.Read(new StringReader(xml));
+            Assert.That(values.Count, Is.EqualTo(1));
+            Assert.That(values[0], Is.EqualTo("Text1"));
+        }
+
+        [TestCaseSource(nameof(SkipXmlData))]
+        public void SkipInternalElement_ReadInnerXml(string xml)
+        {
+            List<string> values = new List<string>();
+            XmlTreeReader reader = new XmlTreeReader() {
+                Nodes = {
+                    new XmlTreeNode("a") {
+                        Nodes = {
+                            new XmlTreeNode("b") {
+                                ProcessElement = (n, e) => {
+                                    string key = e.Reader["id"];
+                                    if (key == null) {
+                                        _ = e.Reader.ReadInnerXml();
+                                        return;
+                                    }
+                                },
+                                Nodes = {
+                                    new XmlTreeNode("c") {
+                                        ProcessTextElement = (n, e) => {
+                                            values.Add(e.Reader.Value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            reader.Read(new StringReader(xml));
+            Assert.That(values.Count, Is.EqualTo(1));
+            Assert.That(values[0], Is.EqualTo("Text1"));
         }
     }
 }
