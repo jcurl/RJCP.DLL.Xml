@@ -16,19 +16,6 @@
             return DateTime.ParseExact(value, "u", CultureInfo.InvariantCulture);
         }
 
-        private static long GetLong(string value)
-        {
-            if (value.StartsWith("0x")) {
-#if NETFRAMEWORK
-                return long.Parse(value.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-#else
-                return long.Parse(value.AsSpan(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-#endif
-            }
-
-            return long.Parse(value, CultureInfo.InvariantCulture);
-        }
-
         private class Volume
         {
             public DateTime RecordedTime { get; set; }
@@ -61,7 +48,7 @@
                 m_Volumes = volumes;
                 Nodes.AddRange(new XmlNodeList() {
                     new XmlTreeNode("recordedtime") {
-                        ProcessTextElement = (n, e) => { Volume.RecordedTime = GetDateTime(e.Reader.Value); }
+                        ProcessTextElement = (n, e) => { Volume.RecordedTime = GetDateTime(e.Text); }
                     },
                     new VolumeInfoXmlTreeNode(this)
                 });
@@ -94,7 +81,7 @@
                 m_Parent = parent;
                 Nodes.AddRange(new XmlNodeList() {
                     new XmlTreeNode("recordedtime") {
-                        ProcessTextElement = (n, e) => { VolumeInfo.RecordedTime = GetDateTime(e.Reader.Value); }
+                        ProcessTextElement = (n, e) => { VolumeInfo.RecordedTime = GetDateTime(e.Text); }
                     },
                     new VolumeExtentXmlTreeNode(this)
                 });
@@ -122,18 +109,31 @@
         {
             private readonly VolumeInfoXmlTreeNode m_Parent;
 
+            private static long GetLong(string value)
+            {
+                if (value.StartsWith("0x")) {
+#if NETFRAMEWORK
+                return long.Parse(value.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+#else
+                    return long.Parse(value.AsSpan(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+#endif
+                }
+
+                return long.Parse(value, CultureInfo.InvariantCulture);
+            }
+
             public VolumeExtentXmlTreeNode(VolumeInfoXmlTreeNode parent) : base("volumeextent")
             {
                 m_Parent = parent;
                 Nodes.AddRange(new XmlNodeList() {
                     new XmlTreeNode("device") {
-                        ProcessTextElement = (n, e) => { VolumeExtent.Device = e.Reader.Value; }
+                        ProcessTextElement = (n, e) => { VolumeExtent.Device = e.Text; }
                     },
                     new XmlTreeNode("offset") {
-                        ProcessTextElement = (n, e) => { VolumeExtent.Offset = GetLong(e.Reader.Value); }
+                        ProcessTextElement = (n, e) => { VolumeExtent.Offset = GetLong(e.Text); }
                     },
                     new XmlTreeNode("length") {
-                        ProcessTextElement = (n, e) => { VolumeExtent.Length = GetLong(e.Reader.Value); }
+                        ProcessTextElement = (n, e) => { VolumeExtent.Length = GetLong(e.Text); }
                     }
                 });
             }

@@ -73,6 +73,7 @@
     <Compile Include="Xml\XmlNodeExtensions.cs" />
     <Compile Include="Xml\XmlNodeList.cs" />
     <Compile Include="Xml\XmlReaderExtensions.cs" />
+    <Compile Include="Xml\XmlTextEventArgs.cs" />
     <Compile Include="Xml\XmlTreeNode.cs" />
     <Compile Include="Xml\XmlTreeReader.cs" />
     <Compile Include="Xml\XmlTreeSettings.cs" />

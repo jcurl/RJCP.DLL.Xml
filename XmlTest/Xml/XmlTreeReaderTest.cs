@@ -38,13 +38,14 @@
             int rootFinished = 0;
             int rootText = 0;
             int rootUnknown = 0;
+            string rootValue = null;
 
             // Describes an XML format that only has a single root node.
             XmlTreeReader reader = new XmlTreeReader() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { rootRead++; },
-                        ProcessTextElement = (n, e) => { rootText++; },
+                        ProcessTextElement = (n, e) => { rootText++; rootValue = e.Text; },
                         ProcessEndElement = (n, e) => { rootFinished++; },
                         ProcessUnknownElement = (n, e) => { rootUnknown++; e.Reader.Skip(); }
                     }
@@ -56,6 +57,7 @@
             Assert.That(rootText, Is.EqualTo(1));
             Assert.That(rootFinished, Is.EqualTo(1));
             Assert.That(rootUnknown, Is.EqualTo(0));
+            Assert.That(rootValue, Is.Empty);
         }
 
         [TestCase("<root><sub/></root>", TestName = "ReadElementsSubEmpty")]
@@ -68,23 +70,25 @@
             int rootFinished = 0;
             int rootText = 0;
             int rootUnknown = 0;
+            string rootValue = null;
             int subRead = 0;
             int subFinished = 0;
             int subText = 0;
             int subUnknown = 0;
+            string subValue = null;
 
             // Describes an XML format that only has a single root node.
             XmlTreeReader reader = new XmlTreeReader() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { rootRead++; },
-                        ProcessTextElement = (n, e) => { rootText++; },
+                        ProcessTextElement = (n, e) => { rootText++; rootValue = e.Text; },
                         ProcessEndElement = (n, e) => { rootFinished++; },
                         ProcessUnknownElement = (n, e) => { rootUnknown++; e.Reader.Skip(); },
                         Nodes = {
                             new XmlTreeNode("sub") {
                                 ProcessElement = (n, e) => { subRead++; },
-                                ProcessTextElement = (n, e) => { subText++; },
+                                ProcessTextElement = (n, e) => { subText++; subValue = e.Text; },
                                 ProcessEndElement = (n, e) => { subFinished++; },
                                 ProcessUnknownElement = (n, e) => { subUnknown++; e.Reader.Skip(); }
                             }
@@ -98,10 +102,12 @@
             Assert.That(rootText, Is.EqualTo(1));
             Assert.That(rootFinished, Is.EqualTo(1));
             Assert.That(rootUnknown, Is.EqualTo(0));
+            Assert.That(rootValue, Is.Empty);
             Assert.That(subRead, Is.EqualTo(1));
             Assert.That(subText, Is.EqualTo(1));
             Assert.That(subFinished, Is.EqualTo(1));
             Assert.That(subUnknown, Is.EqualTo(0));
+            Assert.That(subValue, Is.Empty);
         }
 
         [Test]
@@ -408,7 +414,7 @@
                             new XmlTreeNode("x") {
                                 ProcessElement = (n, e) => { subXProcessElement++; },
                                 ProcessEndElement = (n, e) => { subXProcessEndElement++; },
-                                ProcessTextElement = (n, e) => { list.Add(e.Reader.Value); }
+                                ProcessTextElement = (n, e) => { list.Add(e.Text); }
                             }
                         }
                     }
@@ -498,7 +504,7 @@
                     new XmlTreeNode("a") {
                         Nodes = {
                             new XmlTreeNode("b") {
-                                ProcessTextElement = (n, e) => { _ = int.Parse(e.Reader.Value); }
+                                ProcessTextElement = (n, e) => { _ = int.Parse(e.Text); }
                             }
                         }
                     }
@@ -594,7 +600,7 @@
                                 ProcessElement = (n, e) => { e.Reader.ReadSubtree(); e.Reader.SkipToEndElement(); },
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     }
                                 }
                             }
@@ -627,7 +633,7 @@
                                 },
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     }
                                 }
                             }
@@ -689,7 +695,7 @@
                                 ProcessElement = (n, e) => { e.Reader.Skip(); },
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     }
                                 }
                             }
@@ -721,7 +727,7 @@
                                 ProcessElement = (n, e) => { e.Reader.SkipToEndElement(); },
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     }
                                 }
                             }
@@ -823,7 +829,7 @@
                             new XmlTreeNode("fx", "b") {
                                 ProcessTextElement = (n, e) => {
                                     Assert.That(e.XmlNamespaceManager, Is.Null);
-                                    value = e.Reader.Value;
+                                    value = e.Text;
                                 }
                             }
                         }
@@ -852,7 +858,7 @@
                             new XmlTreeNode("fx", "b") {
                                 ProcessTextElement = (n, e) => {
                                     Assert.That(e.XmlNamespaceManager, Is.Not.Null);
-                                    value = e.Reader.Value;
+                                    value = e.Text;
                                 }
                             }
                         }
@@ -881,7 +887,7 @@
                     new XmlTreeNode("ho", "a") {
                         Nodes = {
                             new XmlTreeNode("ho", "b") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -909,7 +915,7 @@
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
                             new XmlTreeNode("fx", "b") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -938,7 +944,7 @@
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
                             new XmlTreeNode("fx", "b") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -966,7 +972,7 @@
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
                             new XmlTreeNode("fx", "b") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -993,7 +999,7 @@
                     new XmlTreeNode("", "a") {
                         Nodes = {
                             new XmlTreeNode("", "b") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -1020,7 +1026,7 @@
                     new XmlTreeNode("a") {
                         Nodes = {
                             new XmlTreeNode("b") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -1046,7 +1052,7 @@
                     new XmlTreeNode("fx", "b") {
                         Nodes = {
                             new XmlTreeNode("fx", "c") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -1080,7 +1086,7 @@
                     new XmlTreeNode("b") {
                         Nodes = {
                             new XmlTreeNode("c") {
-                                ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                ProcessTextElement = (n, e) => { value = e.Text; }
                             }
                         }
                     }
@@ -1117,7 +1123,7 @@
                             new XmlTreeNode("b") {
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     },
                                     new XmlTreeNode("d") {
                                         ProcessElement = (n, e) => { dnode = true; }
@@ -1148,7 +1154,7 @@
                             new XmlTreeNode("b") {
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     },
                                     new XmlTreeNode("d") {
                                         ProcessElement = (n, e) => { valued = e.Reader.ReadElementContentAsString(); }
@@ -1180,7 +1186,7 @@
                             new XmlTreeNode("b") {
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     },
                                     new XmlTreeNode("d") {
                                         ProcessElement = (n, e) => { dnode = true; }
@@ -1214,7 +1220,7 @@
                             new XmlTreeNode("b") {
                                 Nodes = {
                                     new XmlTreeNode("d") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     }
                                 }
                             }
@@ -1246,7 +1252,7 @@
                             new XmlTreeNode("b") {
                                 Nodes = {
                                     new XmlTreeNode("c") {
-                                        ProcessTextElement = (n, e) => { value = e.Reader.Value; }
+                                        ProcessTextElement = (n, e) => { value = e.Text; }
                                     },
                                 },
                                 ProcessUnknownElement = (n, e) => {
@@ -1323,7 +1329,7 @@
                                 Nodes = {
                                     new XmlTreeNode("c") {
                                         ProcessTextElement = (n, e) => {
-                                            values.Add(e.Reader.Value);
+                                            values.Add(e.Text);
                                         }
                                     }
                                 }
@@ -1356,7 +1362,7 @@
                                 Nodes = {
                                     new XmlTreeNode("c") {
                                         ProcessTextElement = (n, e) => {
-                                            values.Add(e.Reader.Value);
+                                            values.Add(e.Text);
                                         }
                                     }
                                 }
@@ -1389,7 +1395,7 @@
                                 Nodes = {
                                     new XmlTreeNode("c") {
                                         ProcessTextElement = (n, e) => {
-                                            values.Add(e.Reader.Value);
+                                            values.Add(e.Text);
                                         }
                                     }
                                 }

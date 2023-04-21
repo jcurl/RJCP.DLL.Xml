@@ -14,6 +14,13 @@
     public delegate void XmlProcessing(XmlTreeNode node, XmlNodeEventArgs args);
 
     /// <summary>
+    /// XML Processing Delegate for Text.
+    /// </summary>
+    /// <param name="node">The node for which the delegate is relevant.</param>
+    /// <param name="args">The <see cref="XmlTextEventArgs"/> instance containing the event data.</param>
+    public delegate void XmlTextProcessing(XmlTreeNode node, XmlTextEventArgs args);
+
+    /// <summary>
     /// A node in the XML Tree, with the root given by <see cref="XmlTreeReader"/>.
     /// </summary>
     [DebuggerDisplay("{Name}, Nodes={Nodes.Count}")]
@@ -284,7 +291,7 @@
         /// text block within the element, call <c>int.Parse(e.Reader.Value);</c>.
         /// <para>This delegate is never called from the root node.</para>
         /// </remarks>
-        public XmlProcessing ProcessTextElement { get; set; }
+        public XmlTextProcessing ProcessTextElement { get; set; }
 
         private void InternalOnProcessTextElement(XmlNodeEventArgs args)
         {
@@ -296,12 +303,19 @@
             try {
                 // Generated can be used to indicate to skip over the unhandled text element.
                 if (!generated && args.TreeSettings != null) {
-                    XmlProcessing handler = ProcessTextElement;
+                    XmlTextProcessing handler = ProcessTextElement;
                     if (handler == null && args.TreeSettings.ThrowOnUnhandledText)
                         args.Reader.Throw("Unhandled Text Element");
                 }
 
-                OnProcessTextElement(args);
+                string text = string.Empty;
+                if (!generated) {
+                    if (args.Reader.NodeType == XmlNodeType.Text)
+                        text = args.Reader.Value;
+                }
+                XmlTextEventArgs textArgs =
+                    new XmlTextEventArgs(args.Reader, args.XmlNamespaceManager, args.TreeSettings, args.UserObject, text);
+                OnProcessTextElement(textArgs);
             } catch (XmlException) {
                 throw;
             } catch (Exception ex) {
@@ -313,10 +327,10 @@
         /// <summary>
         /// Handles the <see cref="ProcessTextElement" /> delegate.
         /// </summary>
-        /// <param name="args">The <see cref="XmlNodeEventArgs"/> instance containing the event data.</param>
-        protected virtual void OnProcessTextElement(XmlNodeEventArgs args)
+        /// <param name="args">The <see cref="XmlTextEventArgs"/> instance containing the event data.</param>
+        protected virtual void OnProcessTextElement(XmlTextEventArgs args)
         {
-            XmlProcessing handler = ProcessTextElement;
+            XmlTextProcessing handler = ProcessTextElement;
             if (handler != null) handler(this, args);
         }
 

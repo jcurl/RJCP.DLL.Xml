@@ -84,7 +84,7 @@
     ///             ProcessElement = (n, e) => { e.UserObject = new List<string>(); },
     ///             Nodes = {
     ///                 new XmlTreeNode("sub") {
-    ///                     ProcessTextElement = (n, e) => { ((List<string>)e.UserObject).Add(e.Reader.Value); },
+    ///                     ProcessTextElement = (n, e) => { ((List<string>)e.UserObject).Add(e.Text); },
     ///                 }
     ///             }
     ///             ProcessEndElement = (n, e) => { myData = (List<string>)e.UserObject; },
