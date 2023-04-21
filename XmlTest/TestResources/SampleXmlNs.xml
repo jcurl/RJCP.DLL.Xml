@@ -1,0 +1,7 @@
+﻿<rootElement xmlns:a="urn:one" xmlns:b="urn:two">
+  <a:devices>
+    <a:device name="headunit">
+      <b:element>Text</b:element>
+    </a:device>
+  </a:devices>
+</rootElement>

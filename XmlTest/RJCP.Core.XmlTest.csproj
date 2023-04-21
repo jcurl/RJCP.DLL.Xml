@@ -55,8 +55,11 @@
 
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Xml\XmlDocumentExtensionsTest.cs" />
     <Compile Include="Xml\XmlExtensionsTest.cs" />
+    <Compile Include="Xml\XmlNodeExtensionsTest.cs" />
     <Compile Include="Xml\XmlNodeListTest.cs" />
+    <Compile Include="Xml\XmlReaderExtensionsTest.cs" />
     <Compile Include="Xml\XmlTreeNodeInheritanceTest.cs" />
     <Compile Include="Xml\XmlTreeNodeTest.cs" />
     <Compile Include="Xml\XmlTreeReaderTest.cs" />
@@ -80,6 +83,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\ComplexStructureP1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestResources\SampleXmlNs.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestResources\SampleXml.xml">

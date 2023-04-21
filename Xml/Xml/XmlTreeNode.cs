@@ -181,7 +181,7 @@
         /// element, you must instead provide it with a copy of the XML at the current node with a call to
         /// <see cref="XmlReader.ReadSubtree"/>. The function will receive a copy of the subtree, and the current
         /// <see cref="XmlNodeEventArgs.Reader"/> will advance to the next element as if <see cref="XmlReader.Read"/>
-        /// was called, which a call to <see cref="XmlExtensions.SkipToEndElement(XmlReader)"/> can help by moving to
+        /// was called, which a call to <see cref="XmlReaderExtensions.SkipToEndElement(XmlReader)"/> can help by moving to
         /// the end element, putting the <see cref="XmlNodeEventArgs.Reader"/> at the correct position.
         /// </para>
         /// </remarks>

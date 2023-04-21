@@ -66,10 +66,13 @@
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Xml\XmlDocumentExtensions.cs" />
     <Compile Include="Xml\XmlExtensions.cs" />
     <Compile Include="Xml\XmlLineInfo.cs" />
     <Compile Include="Xml\XmlNodeEventArgs.cs" />
+    <Compile Include="Xml\XmlNodeExtensions.cs" />
     <Compile Include="Xml\XmlNodeList.cs" />
+    <Compile Include="Xml\XmlReaderExtensions.cs" />
     <Compile Include="Xml\XmlTreeNode.cs" />
     <Compile Include="Xml\XmlTreeReader.cs" />
     <Compile Include="Xml\XmlTreeSettings.cs" />

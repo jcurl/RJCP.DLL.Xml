@@ -1318,7 +1318,6 @@
                                     string key = e.Reader["id"];
                                     if (key == null) {
                                         e.Reader.Skip();
-                                        return;
                                     }
                                 },
                                 Nodes = {
@@ -1352,7 +1351,6 @@
                                     string key = e.Reader["id"];
                                     if (key == null) {
                                         e.Reader.SkipToEndElement();
-                                        return;
                                     }
                                 },
                                 Nodes = {
@@ -1386,7 +1384,6 @@
                                     string key = e.Reader["id"];
                                     if (key == null) {
                                         _ = e.Reader.ReadInnerXml();
-                                        return;
                                     }
                                 },
                                 Nodes = {
