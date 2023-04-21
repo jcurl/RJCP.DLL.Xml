@@ -53,7 +53,7 @@
 
             reader.Read(new StringReader(xml));
             Assert.That(rootRead, Is.EqualTo(1));
-            Assert.That(rootText, Is.EqualTo(0));
+            Assert.That(rootText, Is.EqualTo(1));
             Assert.That(rootFinished, Is.EqualTo(1));
             Assert.That(rootUnknown, Is.EqualTo(0));
         }
@@ -95,11 +95,11 @@
 
             reader.Read(new StringReader(xml));
             Assert.That(rootRead, Is.EqualTo(1));
-            Assert.That(rootText, Is.EqualTo(0));
+            Assert.That(rootText, Is.EqualTo(1));
             Assert.That(rootFinished, Is.EqualTo(1));
             Assert.That(rootUnknown, Is.EqualTo(0));
             Assert.That(subRead, Is.EqualTo(1));
-            Assert.That(subText, Is.EqualTo(0));
+            Assert.That(subText, Is.EqualTo(1));
             Assert.That(subFinished, Is.EqualTo(1));
             Assert.That(subUnknown, Is.EqualTo(0));
         }

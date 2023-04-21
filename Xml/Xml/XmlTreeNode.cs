@@ -288,13 +288,19 @@
 
         private void InternalOnProcessTextElement(XmlNodeEventArgs args)
         {
+            InternalOnProcessTextElement(args, false);
+        }
+
+        private void InternalOnProcessTextElement(XmlNodeEventArgs args, bool generated)
+        {
             try {
                 // Generated can be used to indicate to skip over the unhandled text element.
-                if (args.TreeSettings != null) {
+                if (!generated && args.TreeSettings != null) {
                     XmlProcessing handler = ProcessTextElement;
                     if (handler == null && args.TreeSettings.ThrowOnUnhandledText)
                         args.Reader.Throw("Unhandled Text Element");
                 }
+
                 OnProcessTextElement(args);
             } catch (XmlException) {
                 throw;
@@ -417,6 +423,7 @@
         private sealed class XmlContext
         {
             private readonly Stack<XmlStackEntry> m_XmlStack = new Stack<XmlStackEntry>();
+            private readonly Stack<bool> m_ProcessedText = new Stack<bool>();
 
             public XmlContext(XmlReader reader, XmlNamespaceManager xmlnsmgr, XmlTreeSettings treeSettings, object userObject)
             {
@@ -432,6 +439,8 @@
 
             public XmlNodeEventArgs Args { get; private set; }
 
+            public bool ProcessedText { get; set; }
+
             public int StackCount { get { return m_XmlStack.Count; } }
 
             /// <summary>
@@ -444,6 +453,7 @@
             /// </remarks>
             public XmlStackEntry Pop()
             {
+                ProcessedText = m_ProcessedText.Pop();
                 return m_XmlStack.Pop();
             }
 
@@ -469,6 +479,8 @@
             {
                 XmlStackEntry entry = new XmlStackEntry(node, name, userObject);
                 m_XmlStack.Push(entry);
+                m_ProcessedText.Push(ProcessedText);
+                ProcessedText = false;
             }
         }
 
@@ -538,7 +550,10 @@
                     }
                     break;
                 case XmlNodeType.Text:
-                    if (node != null) node.InternalOnProcessTextElement(xmlContext.Args);
+                    if (node != null) {
+                        xmlContext.ProcessedText = true;
+                        node.InternalOnProcessTextElement(xmlContext.Args);
+                    }
                     break;
                 case XmlNodeType.EndElement:
                     if (node == null) {
@@ -546,6 +561,8 @@
                         // parsing if this was a subtree.
                         return;
                     }
+
+                    bool processedText = xmlContext.ProcessedText;
 
                     // Check the stack immediately, instead of only at the end, so we can raise an exception as soon as
                     // possible.
@@ -555,6 +572,8 @@
                             xmlContext.Reader.Depth, xmlContext.Reader.Name, xmlContext.StackCount + initialDepth, entry.Name);
 
                     if (xmlContext.Reader.Name.Equals(entry.Name)) {
+                        if (!processedText)
+                            node.InternalOnProcessTextElement(xmlContext.Args, true);
                         node.InternalOnProcessEndElement(xmlContext.Args);
                         node = entry.Node;
                         if (node == null) {
@@ -605,6 +624,7 @@
             } else {
                 skip = false;
                 if (isEmpty) {
+                    childNode.InternalOnProcessTextElement(xmlContext.Args, true);
                     childNode.InternalOnProcessEndElement(xmlContext.Args);
                     xmlContext.Args.UserObject = currentObject;
                 } else {
