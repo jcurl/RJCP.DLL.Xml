@@ -289,11 +289,17 @@
         private void InternalOnProcessTextElement(XmlNodeEventArgs args)
         {
             try {
+                // Generated can be used to indicate to skip over the unhandled text element.
+                if (args.TreeSettings != null) {
+                    XmlProcessing handler = ProcessTextElement;
+                    if (handler == null && args.TreeSettings.ThrowOnUnhandledText)
+                        args.Reader.Throw("Unhandled Text Element");
+                }
                 OnProcessTextElement(args);
             } catch (XmlException) {
                 throw;
             } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                if (args.Reader != null) args.Reader.Throw(ex.Message, ex);
                 throw;
             }
         }
@@ -305,13 +311,7 @@
         protected virtual void OnProcessTextElement(XmlNodeEventArgs args)
         {
             XmlProcessing handler = ProcessTextElement;
-            if (handler == null && args?.TreeSettings != null) {
-                if (args.TreeSettings.ThrowOnUnhandledText)
-                    args.Reader.Throw("Unhandled Text Element");
-                return;
-            }
-
-            handler(this, args);
+            if (handler != null) handler(this, args);
         }
 
         /// <summary>
@@ -360,10 +360,22 @@
                 UserObject = userObject;
             }
 
+            /// <summary>
+            /// Gets the parent node.
+            /// </summary>
+            /// <value>The parent node.</value>
             public XmlTreeNode Node { get; private set; }
 
+            /// <summary>
+            /// Gets the name of the child node.
+            /// </summary>
+            /// <value>The name of the child node.</value>
             public string Name { get; private set; }
 
+            /// <summary>
+            /// Gets the user object state of the parent node.
+            /// </summary>
+            /// <value>The user object state of the parent node.</value>
             public object UserObject { get; set; }
         }
 
@@ -400,6 +412,64 @@
             public int LineNumber { get { return m_NodePos.LineNumber; } }
 
             public int LinePosition { get { return m_NodePos.LinePosition; } }
+        }
+
+        private sealed class XmlContext
+        {
+            private readonly Stack<XmlStackEntry> m_XmlStack = new Stack<XmlStackEntry>();
+
+            public XmlContext(XmlReader reader, XmlNamespaceManager xmlnsmgr, XmlTreeSettings treeSettings, object userObject)
+            {
+                Reader = reader;
+                NsMgr = xmlnsmgr;
+
+                Args = new XmlNodeEventArgs(reader, xmlnsmgr, treeSettings, userObject);
+            }
+
+            public XmlReader Reader { get; private set; }
+
+            public XmlNamespaceManager NsMgr { get; private set; }
+
+            public XmlNodeEventArgs Args { get; private set; }
+
+            public int StackCount { get { return m_XmlStack.Count; } }
+
+            /// <summary>
+            /// Pops the parent node from the stack.
+            /// </summary>
+            /// <returns>The <see cref="XmlStackEntry"/> with parent node details.</returns>
+            /// <remarks>
+            /// Also restores context at the time this class was pushed with
+            /// <see cref="Push(XmlTreeNode, string, object)"/>.
+            /// </remarks>
+            public XmlStackEntry Pop()
+            {
+                return m_XmlStack.Pop();
+            }
+
+            /// <summary>
+            /// Peeks the parent node from the stack.
+            /// </summary>
+            /// <returns>The <see cref="XmlStackEntry"/> with parent node details.</returns>
+            public XmlStackEntry Peek()
+            {
+                return m_XmlStack.Peek();
+            }
+
+            /// <summary>
+            /// Pushes the current node on the stack to start processing the new node.
+            /// </summary>
+            /// <param name="node">The current node.</param>
+            /// <param name="name">The name of the new node.</param>
+            /// <param name="userObject">The user object to restore when popping.</param>
+            /// <remarks>
+            /// Also pushes the context of this class to the stack that it can be restored on <see cref="Pop"/>.
+            /// </remarks>
+            public void Push(XmlTreeNode node, string name, object userObject)
+            {
+                XmlStackEntry entry = new XmlStackEntry(node, name, userObject);
+                m_XmlStack.Push(entry);
+            }
         }
 
         /// <summary>
@@ -443,33 +513,32 @@
             if (reader == null) throw new ArgumentNullException(nameof(reader));
             if (rootList == null) throw new ArgumentNullException(nameof(rootList));
 
-            Stack<XmlStackEntry> xmlStack = new Stack<XmlStackEntry>();
-            Read(reader, rootList, xmlnsmgr, treeSettings, xmlStack, skip, userObject);
+            XmlContext xmlContext = new XmlContext(reader, xmlnsmgr, treeSettings, userObject);
+            Read(xmlContext, rootList, skip);
 
-            if (xmlStack.Count != 0)
-                reader.Throw("Stack mismatch, {0} nodes still on the stack", xmlStack.Count);
+            if (xmlContext.StackCount != 0)
+                reader.Throw("Stack mismatch, {0} nodes still on the stack", xmlContext.StackCount);
         }
 
-        private static void Read(XmlReader reader, XmlNodeList rootList, XmlNamespaceManager xmlnsmgr, XmlTreeSettings treeSettings, Stack<XmlStackEntry> xmlStack, bool skip, object userObject)
+        private static void Read(XmlContext xmlContext, XmlNodeList rootList, bool skip)
         {
-            int initialDepth = reader.Depth;
-            XmlNodeEventArgs xmlArgs = new XmlNodeEventArgs(reader, xmlnsmgr, treeSettings, userObject);
+            int initialDepth = xmlContext.Reader.Depth;
             XmlNodeList nodeList = rootList;
             XmlTreeNode node = null;
-            while (skip || reader.Read()) {
+            while (skip || xmlContext.Reader.Read()) {
                 skip = false;
-                switch (reader.NodeType) {
+                switch (xmlContext.Reader.NodeType) {
                 case XmlNodeType.Element:
-                    string nodeName = GetElementName(reader, xmlnsmgr);
+                    string nodeName = GetElementName(xmlContext.Reader, xmlContext.NsMgr);
                     if (nodeName != null && nodeList.TryGetValue(nodeName, out XmlTreeNode childNode)) {
-                        node = ReadElement(reader, node, childNode, xmlStack, xmlArgs, out skip);
+                        node = ReadElement(xmlContext, node, childNode, out skip);
                         if (node != null) nodeList = node.Nodes;
                     } else {
-                        ReadUnknownElement(reader, node, xmlStack, xmlArgs, out skip);
+                        ReadUnknownElement(xmlContext, node, out skip);
                     }
                     break;
                 case XmlNodeType.Text:
-                    if (node != null) node.InternalOnProcessTextElement(xmlArgs);
+                    if (node != null) node.InternalOnProcessTextElement(xmlContext.Args);
                     break;
                 case XmlNodeType.EndElement:
                     if (node == null) {
@@ -480,13 +549,13 @@
 
                     // Check the stack immediately, instead of only at the end, so we can raise an exception as soon as
                     // possible.
-                    XmlStackEntry entry = xmlStack.Pop();
-                    if (reader.Depth - initialDepth != xmlStack.Count)
-                        reader.Throw("Stack mismatch, at depth {0} end node {1}, expected depth {2} with node {3}",
-                            reader.Depth, reader.Name, xmlStack.Count + initialDepth, entry.Name);
+                    XmlStackEntry entry = xmlContext.Pop();
+                    if (xmlContext.Reader.Depth - initialDepth != xmlContext.StackCount)
+                        xmlContext.Reader.Throw("Stack mismatch, at depth {0} end node {1}, expected depth {2} with node {3}",
+                            xmlContext.Reader.Depth, xmlContext.Reader.Name, xmlContext.StackCount + initialDepth, entry.Name);
 
-                    if (reader.Name.Equals(entry.Name)) {
-                        node.InternalOnProcessEndElement(xmlArgs);
+                    if (xmlContext.Reader.Name.Equals(entry.Name)) {
+                        node.InternalOnProcessEndElement(xmlContext.Args);
                         node = entry.Node;
                         if (node == null) {
                             // We've finished parsing the root node found of this tree. Return, so the user can
@@ -494,10 +563,10 @@
                             return;
                         }
                         nodeList = node.Nodes;
-                        xmlArgs.UserObject = entry.UserObject;
+                        xmlContext.Args.UserObject = entry.UserObject;
                         break;
                     }
-                    reader.Throw("Stack mismatch, found end tag <{0}/> when expected <{1}/>", reader.Name, entry.Name);
+                    xmlContext.Reader.Throw("Stack mismatch, found end tag <{0}/> when expected <{1}/>", xmlContext.Reader.Name, entry.Name);
                     break;
                 }
             }
@@ -520,27 +589,27 @@
             return string.Format("{0}:{1}", prefix, reader.LocalName);
         }
 
-        private static XmlTreeNode ReadElement(XmlReader reader, XmlTreeNode node, XmlTreeNode childNode, Stack<XmlStackEntry> xmlStack, XmlNodeEventArgs xmlArgs, out bool skip)
+        private static XmlTreeNode ReadElement(XmlContext xmlContext, XmlTreeNode node, XmlTreeNode childNode, out bool skip)
         {
-            XmlPosition xmlPos = new XmlPosition(reader);
-            object currentObject = xmlArgs.UserObject;
-            bool isEmpty = reader.IsEmptyElement;
+            XmlPosition xmlPos = new XmlPosition(xmlContext.Reader);
+            object currentObject = xmlContext.Args.UserObject;
+            bool isEmpty = xmlContext.Reader.IsEmptyElement;
 
-            childNode.InternalOnProcessElement(xmlArgs);
-            if (reader.NodeType == XmlNodeType.Attribute) reader.MoveToElement();
+            childNode.InternalOnProcessElement(xmlContext.Args);
+            if (xmlContext.Reader.NodeType == XmlNodeType.Attribute) xmlContext.Reader.MoveToElement();
 
-            if (xmlPos.IsMoved(reader)) {
-                skip = PostProcessElement(reader, ref xmlPos, xmlStack);
-                childNode.InternalOnProcessEndElement(xmlArgs);
-                xmlArgs.UserObject = currentObject;
+            if (xmlPos.IsMoved(xmlContext.Reader)) {
+                skip = PostProcessElement(xmlContext, ref xmlPos);
+                childNode.InternalOnProcessEndElement(xmlContext.Args);
+                xmlContext.Args.UserObject = currentObject;
             } else {
                 skip = false;
                 if (isEmpty) {
-                    childNode.InternalOnProcessEndElement(xmlArgs);
-                    xmlArgs.UserObject = currentObject;
+                    childNode.InternalOnProcessEndElement(xmlContext.Args);
+                    xmlContext.Args.UserObject = currentObject;
                 } else {
                     // Traverse the next child node
-                    xmlStack.Push(new XmlStackEntry(node, xmlPos.NodeName, currentObject));
+                    xmlContext.Push(node, xmlPos.NodeName, currentObject);
                     node = childNode;
                 }
             }
@@ -548,29 +617,29 @@
             return node;
         }
 
-        private static void ReadUnknownElement(XmlReader reader, XmlTreeNode node, Stack<XmlStackEntry> xmlStack, XmlNodeEventArgs xmlArgs, out bool skip)
+        private static void ReadUnknownElement(XmlContext xmlContext, XmlTreeNode node, out bool skip)
         {
             if (node == null) {
-                reader.Throw("No known root found in XML stream");
+                xmlContext.Reader.Throw("No known root found in XML stream");
                 skip = false;
                 return;
             }
 
-            XmlPosition xmlPos = new XmlPosition(reader);
-            object currentObject = xmlArgs.UserObject;
+            XmlPosition xmlPos = new XmlPosition(xmlContext.Reader);
+            object currentObject = xmlContext.Args.UserObject;
 
-            if (node.InternalOnProcessUnknownElement(xmlArgs)) {
-                if (reader.NodeType == XmlNodeType.Attribute) reader.MoveToElement();
+            if (node.InternalOnProcessUnknownElement(xmlContext.Args)) {
+                if (xmlContext.Reader.NodeType == XmlNodeType.Attribute) xmlContext.Reader.MoveToElement();
 
-                if (xmlPos.IsMoved(reader)) {
-                    skip = PostProcessElement(reader, ref xmlPos, xmlStack);
-                    xmlArgs.UserObject = currentObject;
+                if (xmlPos.IsMoved(xmlContext.Reader)) {
+                    skip = PostProcessElement(xmlContext, ref xmlPos);
+                    xmlContext.Args.UserObject = currentObject;
                 } else {
-                    reader.Skip();
+                    xmlContext.Reader.Skip();
                     skip = true;
                 }
             } else {
-                reader.Skip();
+                xmlContext.Reader.Skip();
                 skip = true;
             }
         }
@@ -578,19 +647,19 @@
         /// <summary>
         /// Processes the XmlReader after it's determined the position of the XmlReader has moved.
         /// </summary>
-        /// <param name="reader">The reader that should be processed.</param>
+        /// <param name="xmlContext">The context of the reader.</param>
         /// <param name="xmlPos">The XML position.</param>
-        /// <param name="xmlStack">The XML stack. Used for checking possible stack misalignment.</param>
         /// <returns>
         /// A value if the XmlReader is at the end of the current element as given by <paramref name="xmlPos"/>. If the
         /// return value is <see langword="true"/>, then parsing should not call <see cref="XmlReader.Read()"/>, but
-        /// isntead parse the current node. If the result is <see langword="false"/>, then call
+        /// instead parse the current node. If the result is <see langword="false"/>, then call
         /// <see cref="XmlReader.Read()"/> to advance to the next node before processing it.
         /// </returns>
         /// <remarks>
-        /// This method should only be called if it's known that the position of the <paramref name="reader"/> has moved
-        /// after processing the element. This can be determined by checking the <paramref name="xmlPos"/> parameter
-        /// <see cref="XmlPosition.IsMoved(XmlReader)"/>. That check is not done here for performance.
+        /// This method should only be called if it's known that the position of the <paramref name="xmlContext"/>.
+        /// <see cref="XmlReader"/> has moved after processing the element. This can be determined by checking the
+        /// <paramref name="xmlPos"/> parameter <see cref="XmlPosition.IsMoved(XmlReader)"/>. That check is not done
+        /// here for performance.
         /// <para>
         /// The <paramref name="xmlPos"/> is a <see langword="ref"/> to a <see langword="struct"/> (value type), for
         /// performance reasons so it isn't copied when passed here (although its contents are not changed). The
@@ -598,7 +667,7 @@
         /// allocated on the stack and not on the global heap, thus being slightly faster.
         /// </para>
         /// </remarks>
-        private static bool PostProcessElement(XmlReader reader, ref XmlPosition xmlPos, Stack<XmlStackEntry> xmlStack)
+        private static bool PostProcessElement(XmlContext xmlContext, ref XmlPosition xmlPos)
         {
             // --------------------------------------------------------------------------------------------------------
             // WARNING: The reader must implement IXmlLineInfo, so that if the reader position has changed, it is
@@ -608,12 +677,12 @@
             // --------------------------------------------------------------------------------------------------------
 
             do {
-                int delta = xmlPos.Depth - reader.Depth;
-                switch (reader.NodeType) {
+                int delta = xmlPos.Depth - xmlContext.Reader.Depth;
+                switch (xmlContext.Reader.NodeType) {
                 case XmlNodeType.Element:
                     if (delta != 0)
-                        reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed at <{1}{2}>",
-                            xmlPos.NodeName, reader.Name, reader.IsEmptyElement ? "/" : "");
+                        xmlContext.Reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed at <{1}{2}>",
+                            xmlPos.NodeName, xmlContext.Reader.Name, xmlContext.Reader.IsEmptyElement ? "/" : "");
 
                     // Assume that the user read the current node, and just moved over it with a method like
                     // reader.Skip() and came to the next node at the same depth.
@@ -621,37 +690,37 @@
                 case XmlNodeType.EndElement:
                     if (delta == 0) {
                         // Assume the user called reader.SkipToEndElement() as we're at the same depth as before.
-                        if (!reader.Name.Equals(xmlPos.NodeName))
-                            reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, got element </{1}>",
-                                xmlPos.NodeName, reader.Name);
+                        if (!xmlContext.Reader.Name.Equals(xmlPos.NodeName))
+                            xmlContext.Reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, got element </{1}>",
+                                xmlPos.NodeName, xmlContext.Reader.Name);
                         return false;
                     } else if (delta == 1) {
                         // Assume the user called reader.Skip() or similar functions and we're at the end element of the
                         // parent node.
-                        if (!reader.Name.Equals(xmlStack.Peek().Name))
-                            reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, got element </{1}>, expected </{2}>",
-                                xmlPos.NodeName, reader.Name, xmlStack.Peek().Name);
+                        if (!xmlContext.Reader.Name.Equals(xmlContext.Peek().Name))
+                            xmlContext.Reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, got element </{1}>, expected </{2}>",
+                                xmlPos.NodeName, xmlContext.Reader.Name, xmlContext.Peek().Name);
                         return true;
                     } else {
-                        reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed at </{1}>",
-                            xmlPos.NodeName, reader.Name);
+                        xmlContext.Reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed at </{1}>",
+                            xmlPos.NodeName, xmlContext.Reader.Name);
                     }
                     break;
                 case XmlNodeType.Whitespace:
                 case XmlNodeType.Comment:
                     if (delta < 0 || delta > 1)
-                        reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed",
+                        xmlContext.Reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed",
                             xmlPos.NodeName);
 
                     // If it's white space, then just continue consuming it until we get to an element.
                     break;
                 default:
-                    if (!reader.EOF)
-                        reader.Throw(xmlPos, "Unsupported state of XmlReader after processing element <{0}> (node type {1})",
-                            xmlPos.NodeName, reader.NodeType);
+                    if (!xmlContext.Reader.EOF)
+                        xmlContext.Reader.Throw(xmlPos, "Unsupported state of XmlReader after processing element <{0}> (node type {1})",
+                            xmlPos.NodeName, xmlContext.Reader.NodeType);
                     return true;
                 }
-            } while (reader.Read());
+            } while (xmlContext.Reader.Read());
             return false;
         }
 
