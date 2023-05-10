@@ -15,7 +15,7 @@
         {
             XmlTreeReader reader = new XmlTreeReader();
             Assert.That(reader.Name, Is.Null.Or.Empty);
-            Assert.That(reader.Nodes.Count, Is.EqualTo(0));
+            Assert.That(reader.Nodes, Is.Empty);
         }
 
         [Test]
@@ -1340,7 +1340,7 @@
             };
 
             reader.Read(new StringReader(xml));
-            Assert.That(values.Count, Is.EqualTo(1));
+            Assert.That(values, Has.Count.EqualTo(1));
             Assert.That(values[0], Is.EqualTo("Text1"));
         }
 
@@ -1373,7 +1373,7 @@
             };
 
             reader.Read(new StringReader(xml));
-            Assert.That(values.Count, Is.EqualTo(1));
+            Assert.That(values, Has.Count.EqualTo(1));
             Assert.That(values[0], Is.EqualTo("Text1"));
         }
 
@@ -1406,7 +1406,7 @@
             };
 
             reader.Read(new StringReader(xml));
-            Assert.That(values.Count, Is.EqualTo(1));
+            Assert.That(values, Has.Count.EqualTo(1));
             Assert.That(values[0], Is.EqualTo("Text1"));
         }
     }

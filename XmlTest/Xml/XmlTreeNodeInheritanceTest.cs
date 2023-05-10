@@ -182,9 +182,9 @@
             string fileName = Path.Combine(Deploy.TestDirectory, "TestResources", inputXml);
 
             IList<Volume> volumes = LoadDisks(fileName);
-            Assert.That(volumes.Count, Is.EqualTo(1));
-            Assert.That(volumes[0].VolumeInfo.Count, Is.EqualTo(1));
-            Assert.That(volumes[0].VolumeInfo[0].VolumeExtent.Count, Is.EqualTo(2));
+            Assert.That(volumes, Has.Count.EqualTo(1));
+            Assert.That(volumes[0].VolumeInfo, Has.Count.EqualTo(1));
+            Assert.That(volumes[0].VolumeInfo[0].VolumeExtent, Has.Count.EqualTo(2));
             Assert.That(volumes[0].VolumeInfo[0].VolumeExtent[0].Device, Is.EqualTo(@"\\.\PhysicalDrive2"));
             Assert.That(volumes[0].VolumeInfo[0].VolumeExtent[1].Device, Is.EqualTo(@"\\.\PhysicalDrive1"));
         }

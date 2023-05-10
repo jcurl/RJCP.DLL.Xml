@@ -14,7 +14,7 @@
 
             // The Root node is also empty, which can't be added to the list
             Assert.That(() => { list.Add(reader); }, Throws.TypeOf<ArgumentException>());
-            Assert.That(list.Count, Is.EqualTo(0));
+            Assert.That(list, Is.Empty);
         }
 
         [Test]
