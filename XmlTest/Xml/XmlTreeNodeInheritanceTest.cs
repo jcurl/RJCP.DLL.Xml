@@ -113,7 +113,7 @@
             {
                 if (value.StartsWith("0x")) {
 #if NETFRAMEWORK
-                return long.Parse(value.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+                    return long.Parse(value.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
 #else
                     return long.Parse(value.AsSpan(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
 #endif

@@ -28,15 +28,15 @@
         [Test]
         public void InsertAfterNullDoc()
         {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(XmlFile);
+            XmlDocument doc = new XmlDocument();
+            doc.Load(XmlFile);
 
-                XmlElement node = null;
-                XmlElement newNode = doc.CreateElement("device");
-                newNode.AppendAttribute("name", "display");
-                Assert.That(() => {
-                    _ = node.InsertAfter(newNode);
-                }, Throws.ArgumentNullException);
+            XmlElement node = null;
+            XmlElement newNode = doc.CreateElement("device");
+            newNode.AppendAttribute("name", "display");
+            Assert.That(() => {
+                _ = node.InsertAfter(newNode);
+            }, Throws.ArgumentNullException);
         }
 
         [Test]
