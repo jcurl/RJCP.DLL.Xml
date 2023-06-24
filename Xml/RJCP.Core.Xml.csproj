@@ -14,15 +14,16 @@
     <RootNamespace>RJCP.Core</RootNamespace>
 
     <Authors>Jason Curl</Authors>
-    <Copyright>(C) 2019-2021, Jason Curl</Copyright>
+    <Copyright>(C) 2019-2023, Jason Curl</Copyright>
     <Company></Company>
     <PackageId>RJCP.Core.Xml</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/jcurl/RJCP.DLL.Xml</PackageProjectUrl>
 
     <Description>.NET library for useful XML functions.</Description>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
 
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
 
