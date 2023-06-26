@@ -270,14 +270,16 @@
         protected virtual bool OnProcessUnknownElement(XmlNodeEventArgs args)
         {
             XmlProcessing handler = ProcessUnknownElement;
-            if (handler == null && args?.TreeSettings != null) {
-                if (args.TreeSettings.ThrowOnUnknownElement)
-                    args.Reader.Throw("Unhandled Element");
-                return false;
+            if (handler != null) {
+                handler(this, args);
+                return true;
             }
 
-            handler(this, args);
-            return true;
+            if (args?.TreeSettings != null) {
+                if (args.TreeSettings.ThrowOnUnknownElement)
+                    args.Reader.Throw("Unhandled Element");
+            }
+            return false;
         }
 
         /// <summary>
@@ -301,18 +303,19 @@
         private void InternalOnProcessTextElement(XmlNodeEventArgs args, bool generated)
         {
             try {
-                // Generated can be used to indicate to skip over the unhandled text element.
-                if (!generated && args.TreeSettings != null) {
-                    XmlTextProcessing handler = ProcessTextElement;
-                    if (handler == null && args.TreeSettings.ThrowOnUnhandledText)
-                        args.Reader.Throw("Unhandled Text Element");
-                }
-
                 string text = string.Empty;
+
+                // Generated can be used to indicate to skip over the unhandled text element.
                 if (!generated) {
+                    if (args.TreeSettings != null) {
+                        XmlTextProcessing handler = ProcessTextElement;
+                        if (handler == null && args.TreeSettings.ThrowOnUnhandledText)
+                            args.Reader.Throw("Unhandled Text Element");
+                    }
                     if (args.Reader.NodeType == XmlNodeType.Text)
                         text = args.Reader.Value;
                 }
+
                 XmlTextEventArgs textArgs =
                     new XmlTextEventArgs(args.Reader, args.XmlNamespaceManager, args.TreeSettings, args.UserObject, text);
                 OnProcessTextElement(textArgs);
