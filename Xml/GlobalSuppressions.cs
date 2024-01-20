@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Style", "IDE0074:Use compound assignment", Justification = ".NET Core only feature")]
+[assembly: SuppressMessage("Performance", "CA1847:Use char literal for a single character lookup", Justification = ".NET Core only feature")]

@@ -65,11 +65,12 @@
 #if NETFRAMEWORK
                 Prefix = nodeName.Substring(0, prefixSep);
                 LocalName = nodeName.Substring(prefixSep + 1);
+                if (LocalName.Contains(":")) ThrowInvalidNodeName(nodeName, nameof(nodeName));
 #else
                 Prefix = nodeName[..prefixSep];
                 LocalName = nodeName[(prefixSep + 1)..];
+                if (LocalName.Contains(':')) ThrowInvalidNodeName(nodeName, nameof(nodeName));
 #endif
-                if (LocalName.IndexOf(':') != -1) ThrowInvalidNodeName(nodeName, nameof(nodeName));
                 if (string.IsNullOrWhiteSpace(Prefix)) ThrowInvalidNodeName(nodeName, nameof(nodeName));
                 if (string.IsNullOrWhiteSpace(LocalName)) ThrowInvalidNodeName(nodeName, nameof(nodeName));
             } else {
@@ -98,7 +99,7 @@
 
             if (string.IsNullOrEmpty(prefix)) {
                 Name = localName;
-                if (localName.IndexOf(':') != -1) ThrowInvalidNodeName(Name, nameof(localName));
+                if (localName.Contains(":")) ThrowInvalidNodeName(Name, nameof(localName));
 
                 Prefix = string.Empty;
                 LocalName = localName;
@@ -106,8 +107,8 @@
                 if (string.IsNullOrWhiteSpace(prefix)) throw new ArgumentException("May not be an empty string", nameof(prefix));
 
                 Name = string.Format("{0}:{1}", prefix, localName);
-                if (prefix.IndexOf(':') != -1) ThrowInvalidNodeName(Name, nameof(prefix));
-                if (localName.IndexOf(':') != -1) ThrowInvalidNodeName(Name, nameof(localName));
+                if (prefix.Contains(":")) ThrowInvalidNodeName(Name, nameof(prefix));
+                if (localName.Contains(":")) ThrowInvalidNodeName(Name, nameof(localName));
 
                 Prefix = prefix;
                 LocalName = localName;
@@ -402,7 +403,7 @@
             public object UserObject { get; set; }
         }
 
-        private struct XmlPosition : IXmlLineInfo
+        private readonly struct XmlPosition : IXmlLineInfo
         {
             private readonly IXmlLineInfo m_NodePos;
 
@@ -426,9 +427,9 @@
                 return false;
             }
 
-            public string NodeName { get; private set; }
+            public string NodeName { get; }
 
-            public int Depth { get; private set; }
+            public int Depth { get; }
 
             public bool HasLineInfo() { return true; }
 
