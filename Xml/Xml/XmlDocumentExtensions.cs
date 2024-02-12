@@ -25,9 +25,9 @@
         /// </exception>
         public static XmlElement CreateElement(this XmlDocument doc, string prefix, string localName, XmlNamespaceManager nsMgr)
         {
-            if (doc == null) throw new ArgumentNullException(nameof(doc));
-            if (localName == null) throw new ArgumentNullException(nameof(localName));
-            if (nsMgr == null) throw new ArgumentNullException(nameof(nsMgr));
+            ThrowHelper.ThrowIfNull(doc);
+            ThrowHelper.ThrowIfNull(localName);
+            ThrowHelper.ThrowIfNull(nsMgr);
 
             return doc.CreateElement(prefix, localName, nsMgr.LookupNamespace(prefix ?? string.Empty));
         }

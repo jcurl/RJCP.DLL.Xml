@@ -31,8 +31,8 @@
         /// </exception>
         public static XmlElement InsertAfter(this XmlElement refChild, XmlElement newChild)
         {
-            if (refChild == null) throw new ArgumentNullException(nameof(refChild));
-            if (newChild == null) throw new ArgumentNullException(nameof(newChild));
+            ThrowHelper.ThrowIfNull(refChild);
+            ThrowHelper.ThrowIfNull(newChild);
             if (refChild.ParentNode == null) return null;
 
             return (XmlElement)refChild.ParentNode.InsertAfter(newChild, refChild);
@@ -61,8 +61,8 @@
         /// </exception>
         public static XmlElement InsertBefore(this XmlElement refChild, XmlElement newChild)
         {
-            if (refChild == null) throw new ArgumentNullException(nameof(refChild));
-            if (newChild == null) throw new ArgumentNullException(nameof(newChild));
+            ThrowHelper.ThrowIfNull(refChild);
+            ThrowHelper.ThrowIfNull(newChild);
             if (refChild.ParentNode == null) return null;
 
             return (XmlElement)refChild.ParentNode.InsertBefore(newChild, refChild);
@@ -76,7 +76,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="oldChild"/> is <see langword="null"/>.</exception>
         public static XmlElement RemoveElement(this XmlElement oldChild)
         {
-            if (oldChild == null) throw new ArgumentNullException(nameof(oldChild));
+            ThrowHelper.ThrowIfNull(oldChild);
             if (oldChild.ParentNode == null) return null;
 
             return (XmlElement)oldChild.ParentNode.RemoveChild(oldChild);
@@ -96,8 +96,8 @@
         /// </exception>
         public static XmlAttribute AppendAttribute(this XmlElement node, string attribute, string value)
         {
-            if (node == null) throw new ArgumentNullException(nameof(node));
-            if (attribute == null) throw new ArgumentNullException(nameof(attribute));
+            ThrowHelper.ThrowIfNull(node);
+            ThrowHelper.ThrowIfNull(attribute);
 
             XmlAttribute xmlAttr = node.OwnerDocument.CreateAttribute(attribute);
             xmlAttr.Value = value ?? string.Empty;

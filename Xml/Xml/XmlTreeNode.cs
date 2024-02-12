@@ -53,7 +53,7 @@
         /// </exception>
         public XmlTreeNode(string nodeName)
         {
-            if (nodeName == null) throw new ArgumentNullException(nameof(nodeName));
+            ThrowHelper.ThrowIfNull(nodeName);
             if (string.IsNullOrWhiteSpace(nodeName)) throw new ArgumentException("May not be an empty string", nameof(nodeName));
 
             Name = nodeName;
@@ -93,8 +93,8 @@
         /// </exception>
         public XmlTreeNode(string prefix, string localName)
         {
-            if (prefix == null) throw new ArgumentNullException(nameof(prefix));
-            if (localName == null) throw new ArgumentNullException(nameof(localName));
+            ThrowHelper.ThrowIfNull(prefix);
+            ThrowHelper.ThrowIfNull(localName);
             if (string.IsNullOrWhiteSpace(localName)) throw new ArgumentException("May not be an empty string", nameof(localName));
 
             if (string.IsNullOrEmpty(prefix)) {
@@ -540,8 +540,8 @@
         /// </remarks>
         protected static void Read(XmlReader reader, XmlNodeList rootList, XmlNamespaceManager xmlnsmgr, XmlTreeSettings treeSettings, bool skip, object userObject)
         {
-            if (reader == null) throw new ArgumentNullException(nameof(reader));
-            if (rootList == null) throw new ArgumentNullException(nameof(rootList));
+            ThrowHelper.ThrowIfNull(reader);
+            ThrowHelper.ThrowIfNull(rootList);
 
             XmlContext xmlContext = new XmlContext(reader, xmlnsmgr, treeSettings, userObject);
             Read(xmlContext, rootList, skip);

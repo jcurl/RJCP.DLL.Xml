@@ -19,8 +19,7 @@
         /// <exception cref="ArgumentException">Item name may not be empty or whitespace</exception>
         protected override void OnAdd(XmlTreeNode item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ThrowHelper.ThrowIfNull(item);
             if (string.IsNullOrWhiteSpace(item.Name))
                 throw new ArgumentException("Item name may not be empty or whitespace");
         }

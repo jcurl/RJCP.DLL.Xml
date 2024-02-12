@@ -54,7 +54,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../datastructures/Datastructures/RJCP.Core.Datastructures.csproj" />
+    <ProjectReference Include="..\..\environment\SysCompat\RJCP.Core.SysCompat.csproj" />
+    <ProjectReference Include="..\..\datastructures\Datastructures\RJCP.Core.Datastructures.csproj" />
   </ItemGroup>
 
   <ItemGroup>
