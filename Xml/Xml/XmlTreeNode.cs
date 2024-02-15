@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
     using System.Xml;
     using Collections;
@@ -114,6 +115,7 @@
             }
         }
 
+        [DoesNotReturn]
         private static void ThrowInvalidNodeName(string nodeName, string argument, [CallerArgumentExpression(nameof(argument))] string paramName = null)
         {
             if (ReferenceEquals(nodeName, argument))
