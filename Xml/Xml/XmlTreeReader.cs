@@ -96,11 +96,6 @@
     [DebuggerDisplay("ROOT, Nodes={Nodes.Count}")]
     public class XmlTreeReader : XmlTreeNode
     {
-        private const XmlReaderSettings DefaultReaderSettings = null;
-        private const XmlTreeSettings DefaultTreeSettings = null;
-        private const XmlNamespaceManager DefaultNamespaceManager = null;
-        private const IDictionary<string, string> EmptyNamespace = null;
-
         /// <summary>
         /// Reads the XML file name given, using default reader settings.
         /// </summary>
@@ -138,7 +133,7 @@
         /// </exception>
         public void Read(string fileName)
         {
-            Read(fileName, DefaultReaderSettings, DefaultTreeSettings, EmptyNamespace);
+            Read(fileName, readerSettings: null, treeSettings: null, xmlns: null);
         }
 
         /// <summary>
@@ -179,7 +174,7 @@
         /// </exception>
         public void Read(string fileName, IDictionary<string, string> xmlns)
         {
-            Read(fileName, DefaultReaderSettings, DefaultTreeSettings, xmlns);
+            Read(fileName, readerSettings: null, treeSettings: null, xmlns);
         }
 
         /// <summary>
@@ -224,7 +219,7 @@
         /// </exception>
         public void Read(string fileName, XmlReaderSettings readerSettings)
         {
-            Read(fileName, readerSettings, DefaultTreeSettings, EmptyNamespace);
+            Read(fileName, readerSettings, treeSettings: null, xmlns: null);
         }
 
         /// <summary>
@@ -272,7 +267,7 @@
         /// </exception>
         public void Read(string fileName, XmlReaderSettings readerSettings, XmlTreeSettings treeSettings)
         {
-            Read(fileName, readerSettings, treeSettings, EmptyNamespace);
+            Read(fileName, readerSettings, treeSettings, xmlns: null);
         }
 
         /// <summary>
@@ -315,7 +310,7 @@
         /// </exception>
         public void Read(string fileName, XmlTreeSettings treeSettings)
         {
-            Read(fileName, DefaultReaderSettings, treeSettings, EmptyNamespace);
+            Read(fileName, readerSettings: null, treeSettings, xmlns: null);
         }
 
         /// <summary>
@@ -361,7 +356,7 @@
         /// </exception>
         public void Read(string fileName, XmlReaderSettings readerSettings, IDictionary<string, string> xmlns)
         {
-            Read(fileName, readerSettings, DefaultTreeSettings, xmlns);
+            Read(fileName, readerSettings, treeSettings: null, xmlns);
         }
 
         /// <summary>
@@ -405,7 +400,7 @@
         /// </exception>
         public void Read(string fileName, XmlTreeSettings treeSettings, IDictionary<string, string> xmlns)
         {
-            Read(fileName, DefaultReaderSettings, treeSettings, xmlns);
+            Read(fileName, readerSettings: null, treeSettings, xmlns);
         }
 
         /// <summary>
@@ -470,7 +465,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
         public void Read(Stream stream)
         {
-            Read(stream, DefaultReaderSettings, DefaultTreeSettings, EmptyNamespace);
+            Read(stream, readerSettings: null, treeSettings: null, xmlns: null);
         }
 
         /// <summary>
@@ -485,7 +480,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
         public void Read(Stream stream, IDictionary<string, string> xmlns)
         {
-            Read(stream, DefaultReaderSettings, DefaultTreeSettings, xmlns);
+            Read(stream, readerSettings: null, treeSettings: null, xmlns);
         }
 
         /// <summary>
@@ -504,7 +499,7 @@
         /// </exception>
         public void Read(Stream stream, XmlReaderSettings readerSettings)
         {
-            Read(stream, readerSettings, DefaultTreeSettings, EmptyNamespace);
+            Read(stream, readerSettings, treeSettings: null, xmlns: null);
         }
 
         /// <summary>
@@ -521,7 +516,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
         public void Read(Stream stream, XmlTreeSettings treeSettings)
         {
-            Read(stream, DefaultReaderSettings, treeSettings, EmptyNamespace);
+            Read(stream, readerSettings: null, treeSettings, xmlns: null);
         }
 
         /// <summary>
@@ -543,7 +538,7 @@
         /// </exception>
         public void Read(Stream stream, XmlReaderSettings readerSettings, XmlTreeSettings treeSettings)
         {
-            Read(stream, readerSettings, treeSettings, EmptyNamespace);
+            Read(stream, readerSettings, treeSettings, xmlns: null);
         }
 
         /// <summary>
@@ -563,7 +558,7 @@
         /// </exception>
         public void Read(Stream stream, XmlReaderSettings readerSettings, IDictionary<string, string> xmlns)
         {
-            Read(stream, readerSettings, DefaultTreeSettings, xmlns);
+            Read(stream, readerSettings, treeSettings: null, xmlns);
         }
 
         /// <summary>
@@ -581,7 +576,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="stream"/> is <see langword="null"/>.</exception>
         public void Read(Stream stream, XmlTreeSettings treeSettings, IDictionary<string, string> xmlns)
         {
-            Read(stream, DefaultReaderSettings, treeSettings, xmlns);
+            Read(stream, readerSettings: null, treeSettings, xmlns);
         }
 
         /// <summary>
@@ -604,7 +599,7 @@
         /// </exception>
         public void Read(Stream stream, XmlReaderSettings readerSettings, XmlTreeSettings treeSettings, IDictionary<string, string> xmlns)
         {
-            if (readerSettings == DefaultReaderSettings) readerSettings = DefaultSafeSettings();
+            readerSettings ??= DefaultSafeSettings();
             using (XmlReader reader = XmlReader.Create(stream, readerSettings)) {
                 Read(reader, GetXmlNsMgr(null, xmlns), treeSettings);
             }
@@ -625,7 +620,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is <see langword="null"/>.</exception>
         public void Read(TextReader textReader)
         {
-            Read(textReader, DefaultReaderSettings, DefaultTreeSettings, EmptyNamespace);
+            Read(textReader, readerSettings: null, treeSettings: null, xmlns: null);
         }
 
         /// <summary>
@@ -645,7 +640,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is <see langword="null"/>.</exception>
         public void Read(TextReader textReader, IDictionary<string, string> xmlns)
         {
-            Read(textReader, DefaultReaderSettings, DefaultTreeSettings, xmlns);
+            Read(textReader, readerSettings: null, treeSettings: null, xmlns);
         }
 
         /// <summary>
@@ -666,7 +661,7 @@
         /// </exception>
         public void Read(TextReader textReader, XmlReaderSettings readerSettings)
         {
-            Read(textReader, readerSettings, DefaultTreeSettings, EmptyNamespace);
+            Read(textReader, readerSettings, treeSettings: null, xmlns: null);
         }
 
         /// <summary>
@@ -689,7 +684,7 @@
         /// </exception>
         public void Read(TextReader textReader, XmlTreeSettings treeSettings)
         {
-            Read(textReader, DefaultReaderSettings, treeSettings, EmptyNamespace);
+            Read(textReader, readerSettings: null, treeSettings, xmlns: null);
         }
 
         /// <summary>
@@ -709,7 +704,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is <see langword="null"/>.</exception>
         public void Read(TextReader textReader, XmlReaderSettings readerSettings, IDictionary<string, string> xmlns)
         {
-            Read(textReader, readerSettings, DefaultTreeSettings, xmlns);
+            Read(textReader, readerSettings, treeSettings: null, xmlns);
         }
 
         /// <summary>
@@ -731,7 +726,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is <see langword="null"/>.</exception>
         public void Read(TextReader textReader, XmlTreeSettings treeSettings, IDictionary<string, string> xmlns)
         {
-            Read(textReader, DefaultReaderSettings, treeSettings, xmlns);
+            Read(textReader, readerSettings: null, treeSettings, xmlns);
         }
 
         /// <summary>
@@ -753,7 +748,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is <see langword="null"/>.</exception>
         public void Read(TextReader textReader, XmlReaderSettings readerSettings, XmlTreeSettings treeSettings)
         {
-            Read(textReader, readerSettings, treeSettings, EmptyNamespace);
+            Read(textReader, readerSettings, treeSettings, xmlns: null);
         }
 
         /// <summary>
@@ -793,7 +788,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <see langword="null"/>.</exception>
         public void Read(XmlReader reader)
         {
-            Read(reader, DefaultNamespaceManager, DefaultTreeSettings);
+            Read(reader, xmlnsmgr: null, treeSettings: null);
         }
 
         /// <summary>
@@ -808,7 +803,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <see langword="null"/>.</exception>
         public void Read(XmlReader reader, IDictionary<string, string> xmlns)
         {
-            Read(reader, GetXmlNsMgr(null, xmlns), DefaultTreeSettings);
+            Read(reader, GetXmlNsMgr(null, xmlns), treeSettings: null);
         }
 
         /// <summary>
@@ -825,7 +820,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <see langword="null"/>.</exception>
         public void Read(XmlReader reader, XmlTreeSettings treeSettings)
         {
-            Read(reader, DefaultNamespaceManager, treeSettings);
+            Read(reader, xmlnsmgr: null, treeSettings);
         }
 
         /// <summary>
@@ -858,7 +853,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <see langword="null"/>.</exception>
         public void Read(XmlReader reader, XmlNamespaceManager xmlnsmgr)
         {
-            Read(reader, xmlnsmgr, DefaultTreeSettings);
+            Read(reader, xmlnsmgr, treeSettings: null);
         }
 
         /// <summary>
@@ -874,8 +869,8 @@
         /// <exception cref="ArgumentNullException"><paramref name="reader"/> is <see langword="null"/>.</exception>
         public void Read(XmlReader reader, XmlNamespaceManager xmlnsmgr, XmlTreeSettings treeSettings)
         {
-            bool isSubTree = reader.NodeType != XmlNodeType.None;
-            if (treeSettings == DefaultTreeSettings) treeSettings = new XmlTreeSettings();
+            bool isSubTree = reader.NodeType is not XmlNodeType.None;
+            treeSettings ??= new XmlTreeSettings();
             Read(reader, Nodes, xmlnsmgr, treeSettings, isSubTree, null);
 
             if (!isSubTree) {
