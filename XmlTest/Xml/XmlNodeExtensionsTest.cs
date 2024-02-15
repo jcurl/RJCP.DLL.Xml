@@ -13,7 +13,7 @@
         [Test]
         public void InsertAfter()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");
@@ -28,7 +28,7 @@
         [Test]
         public void InsertAfterNullDoc()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = null;
@@ -42,7 +42,7 @@
         [Test]
         public void InsertAfterNullNode()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");
@@ -54,7 +54,7 @@
         [Test]
         public void InsertAfterNoParent()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = doc.CreateElement("newNode");
@@ -67,7 +67,7 @@
         [Test]
         public void InsertBefore()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");
@@ -82,7 +82,7 @@
         [Test]
         public void InsertBeforeNullDoc()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = null;
@@ -96,7 +96,7 @@
         [Test]
         public void InsertBeforeNullNode()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");
@@ -108,7 +108,7 @@
         [Test]
         public void InsertBeforeNoParent()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = doc.CreateElement("newNode");
@@ -121,7 +121,7 @@
         [Test]
         public void RemoveElement()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']/element");
@@ -143,7 +143,7 @@
         [Test]
         public void RemoveElementNoParent()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = doc.CreateElement("newNode");
@@ -153,7 +153,7 @@
         [Test]
         public void AppendAttribute()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");
@@ -176,7 +176,7 @@
         [Test]
         public void AppendAttributeNullName()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");
@@ -188,7 +188,7 @@
         [Test]
         public void AppendAttributeNullValue()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             XmlElement node = (XmlElement)doc.SelectSingleNode("/rootElement/devices/device[@name='headunit']");

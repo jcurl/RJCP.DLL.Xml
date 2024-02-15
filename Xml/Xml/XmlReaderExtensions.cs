@@ -125,7 +125,7 @@
         /// </remarks>
         public static void Throw(this XmlReader xmlReader, IXmlLineInfo position, string message)
         {
-            if (position == null) {
+            if (position is null) {
                 xmlReader.Throw(message);
                 return;
             }
@@ -183,7 +183,7 @@
         /// </remarks>
         public static void Throw(this XmlReader xmlReader, IXmlLineInfo position, string message, Exception innerException)
         {
-            if (position == null) {
+            if (position is null) {
                 xmlReader.Throw(message);
                 return;
             }
@@ -220,7 +220,7 @@
         /// <exception cref="XmlException">The user exception.</exception>
         public static void Throw(IXmlLineInfo position, string message, Exception innerException)
         {
-            if (position == null || !position.HasLineInfo()) throw new XmlException(message);
+            if (position is null || !position.HasLineInfo()) throw new XmlException(message);
             throw new XmlException(message, innerException, position.LineNumber, position.LinePosition);
         }
     }

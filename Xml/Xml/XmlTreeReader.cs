@@ -454,7 +454,7 @@
         /// </exception>
         public void Read(string fileName, XmlReaderSettings readerSettings, XmlTreeSettings treeSettings, IDictionary<string, string> xmlns)
         {
-            using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+            using (FileStream fileStream = new(fileName, FileMode.Open, FileAccess.Read, FileShare.Read)) {
                 Read(fileStream, readerSettings, treeSettings, xmlns);
             }
         }
@@ -776,7 +776,7 @@
         /// <exception cref="ArgumentNullException"><paramref name="textReader"/> is <see langword="null"/>.</exception>
         public void Read(TextReader textReader, XmlReaderSettings readerSettings, XmlTreeSettings treeSettings, IDictionary<string, string> xmlns)
         {
-            if (readerSettings == null) readerSettings = DefaultSafeSettings();
+            readerSettings ??= DefaultSafeSettings();
             using (XmlReader reader = XmlReader.Create(textReader, readerSettings)) {
                 Read(reader, GetXmlNsMgr(null, xmlns), treeSettings);
             }

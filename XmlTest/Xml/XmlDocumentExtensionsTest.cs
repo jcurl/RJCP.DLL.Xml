@@ -14,10 +14,10 @@
         [Test]
         public void CreateElementWithNs()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr = new(doc.NameTable);
             nsmgr.AddNamespace("", "");
             nsmgr.AddNamespace("a", "urn:one");
             nsmgr.AddNamespace("b", "urn:two");
@@ -32,10 +32,10 @@
         [Test]
         public void CreateElementWithNsOther()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr = new(doc.NameTable);
             nsmgr.AddNamespace("", "");
             nsmgr.AddNamespace("x", "urn:one");
             nsmgr.AddNamespace("y", "urn:two");
@@ -50,11 +50,11 @@
         [Test]
         public void CreateElementWithNsDefault()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             // Assume we don't know what the namespace is when we search, just the URNs. This is good enough to search.
-            XmlNamespaceManager nsmgr1 = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr1 = new(doc.NameTable);
             nsmgr1.AddNamespace("", "");
             nsmgr1.AddNamespace("x", "urn:one");
             nsmgr1.AddNamespace("y", "urn:two");
@@ -64,7 +64,7 @@
             // the location in the tree.
             string a = node.GetPrefixOfNamespace("urn:one");
             string b = node.GetPrefixOfNamespace("urn:two");
-            XmlNamespaceManager nsmgr2 = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr2 = new(doc.NameTable);
             nsmgr2.AddNamespace("", "");
             nsmgr2.AddNamespace(a, "urn:one");
             nsmgr2.AddNamespace(b, "urn:two");
@@ -78,7 +78,7 @@
         public void CreateElementNullDoc()
         {
             XmlDocument doc = null;
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(new NameTable());
+            XmlNamespaceManager nsmgr = new(new NameTable());
             nsmgr.AddNamespace("", "");
             nsmgr.AddNamespace("a", "urn:one");
             nsmgr.AddNamespace("b", "urn:two");
@@ -91,10 +91,10 @@
         [Test]
         public void CreateElementNullLocalName()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr = new(doc.NameTable);
             nsmgr.AddNamespace("", "");
             nsmgr.AddNamespace("a", "urn:one");
             nsmgr.AddNamespace("b", "urn:two");
@@ -107,7 +107,7 @@
         [Test]
         public void CreateElementNullNsMgr()
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
             Assert.That(() => {
@@ -120,10 +120,10 @@
         [TestCase("")]
         public void CreateElementNullPrefix(string prefix)
         {
-            XmlDocument doc = new XmlDocument();
+            XmlDocument doc = new();
             doc.Load(XmlFile);
 
-            XmlNamespaceManager nsmgr = new XmlNamespaceManager(doc.NameTable);
+            XmlNamespaceManager nsmgr = new(doc.NameTable);
             nsmgr.AddNamespace("", "");
             nsmgr.AddNamespace("a", "urn:one");
             nsmgr.AddNamespace("b", "urn:two");

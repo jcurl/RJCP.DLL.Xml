@@ -13,7 +13,7 @@
         [Test]
         public void Constructor()
         {
-            XmlTreeReader reader = new XmlTreeReader();
+            XmlTreeReader reader = new();
             Assert.That(reader.Name, Is.Null.Or.Empty);
             Assert.That(reader.Nodes, Is.Empty);
         }
@@ -21,7 +21,7 @@
         [Test]
         public void ReadEmptyXmlNoRoot()
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("root")
                 }
@@ -41,7 +41,7 @@
             string rootValue = null;
 
             // Describes an XML format that only has a single root node.
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { rootRead++; },
@@ -78,7 +78,7 @@
             string subValue = null;
 
             // Describes an XML format that only has a single root node.
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { rootRead++; },
@@ -113,7 +113,7 @@
         [Test]
         public void UserObjectRoot()
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { e.UserObject = 1; },
@@ -130,7 +130,7 @@
         [TestCase("<root><sub/></root>", TestName = "UserObjectSubNodesEmpty")]
         public void UserObjectSubNodes(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { e.UserObject = 1; },
@@ -170,7 +170,7 @@
         [TestCase("<a><b><c/><d></d></b></a>", TestName = "IgnoreUnknownElementLevel2SubSecond2")]
         public void IgnoreUnknownElement(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -192,7 +192,7 @@
         [TestCase("<a><b><c/><d></d></b></a>", TestName = "UnknownElementDefinedRight")]
         public void UnknownElementDefinedAndEmpty(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -219,7 +219,7 @@
         [TestCase("<a><b><c/><d></d></b></a>", TestName = "UnknownElementSkipRight")]
         public void UnknownElementSkip(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -246,7 +246,7 @@
         [TestCase("<a><b><c/><d></d></b></a>", TestName = "UnknownElementSkipEndElementRight")]
         public void UnknownElementSkipEndElement(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -276,7 +276,7 @@
         public void MultipleRoots(string xml, int path)
         {
             int foundPath = 0;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     // Even though an XML file may only have one root, the XmlTreeReader implementation can allow to
                     // handle multiple roots (e.g. multiple versions of the same file can be read at once, possibly
@@ -311,12 +311,12 @@
         [TestCase("<root><sub><x>Text</x></sub></root>", true, TestName = "ReadFromSub2XText")]
         public void ReadFromSub2(string xml, bool found)
         {
-            XmlTreeSettings xmlTreeSettings = new XmlTreeSettings() {
+            XmlTreeSettings xmlTreeSettings = new() {
                 ThrowOnUnhandledText = false
             };
 
             bool readSub = false;
-            XmlTreeReader readerSub = new XmlTreeReader() {
+            XmlTreeReader readerSub = new() {
                 Nodes = {
                     // The root node in the subtree must be the same as the node which is being processed. If it isn't,
                     // an exception will be raised that no known root can be found.
@@ -330,7 +330,7 @@
                 }
             };
 
-            XmlTreeReader readerRoot = new XmlTreeReader() {
+            XmlTreeReader readerRoot = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         // A typical use case might be to split reading different sections of the XML into different
@@ -358,12 +358,12 @@
         [TestCase("<root><sub><x>Text</x></sub></root>", true, TestName = "ReadFromSub3XText")]
         public void ReadFromSub3(string xml, bool found)
         {
-            XmlTreeSettings xmlTreeSettings = new XmlTreeSettings() {
+            XmlTreeSettings xmlTreeSettings = new() {
                 ThrowOnUnhandledText = false
             };
 
             bool readSub = false;
-            XmlTreeReader readerSub = new XmlTreeReader() {
+            XmlTreeReader readerSub = new() {
                 Nodes = {
                     // The root node in the subtree must be the same as the node which is being processed. If it isn't,
                     // an exception will be raised that no known root can be found.
@@ -377,7 +377,7 @@
                 }
             };
 
-            XmlTreeReader readerRoot = new XmlTreeReader() {
+            XmlTreeReader readerRoot = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         Nodes = {
@@ -397,13 +397,13 @@
         public void ReadFromSub3List()
         {
             const string Xml = "<root><sub><x>Text1</x></sub><sub><x>Text2</x></sub></root>";
-            List<string> list = new List<string>();
+            List<string> list = new();
 
             int subProcessElement = 0;
             int subProcessEndElement = 0;
             int subXProcessElement = 0;
             int subXProcessEndElement = 0;
-            XmlTreeReader readerSub = new XmlTreeReader() {
+            XmlTreeReader readerSub = new() {
                 Nodes = {
                     // The root node in the subtree must be the same as the node which is being processed. If it isn't,
                     // an exception will be raised that no known root can be found.
@@ -427,7 +427,7 @@
             int rootSubProcessEndElement = 0;
             int rootSubXProcessElement = 0;
             int rootSubXProcessEndElement = 0;
-            XmlTreeReader readerRoot = new XmlTreeReader() {
+            XmlTreeReader readerRoot = new() {
                 Nodes = {
                     new XmlTreeNode("root") {
                         ProcessElement = (n, e) => { rootProcessElement++; },
@@ -478,7 +478,7 @@
         [TestCase("<a><b></c></a>", TestName = "MismatchXml(ab/c/a)")]
         public void InvalidXml(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -499,7 +499,7 @@
         {
             const string Xml = "<a><b>foo</b></a>";
 
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -520,7 +520,7 @@
         {
             const string Xml = "<a><b>foo</b></a>";
 
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -541,7 +541,7 @@
         {
             const string Xml = "<a><b>foo</b></a>";
 
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -553,7 +553,7 @@
                 }
             };
 
-            XmlTreeSettings treeSettings = new XmlTreeSettings() {
+            XmlTreeSettings treeSettings = new() {
                 ThrowOnUnhandledText = false
             };
 
@@ -569,7 +569,7 @@
         public void ReadElementContentAsString(string xml, string expectedValue)
         {
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -592,7 +592,7 @@
         public void ProcessElementReadSubTree(string xml)
         {
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -619,7 +619,7 @@
             const string Xml = "<a><b><c>Text</c><c>Text2</c></b></a>";
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -652,7 +652,7 @@
         {
             string value1 = null;
             string value2 = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -685,7 +685,7 @@
         public void ProcessElementSkip(string xml)
         {
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -717,7 +717,7 @@
         public void ProcessElementSkipToEndElement(string xml)
         {
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -745,7 +745,7 @@
         public void ProcessElementInAttribute(string xml)
         {
             int processedC = 0;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -773,7 +773,7 @@
         [TestCase("<a><b><c>Content</c></b></a>", TestName = "ProcessElementContent")]
         public void ProcessElementContent(string xml)
         {
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -802,7 +802,7 @@
             const string Xml = "<script>\n  <![CDATA[\n    <message> Welcome to my world! </message>\n  ]]>\n</script>";
             const string expectedValue = "\n  \n    <message> Welcome to my world! </message>\n  \n";
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("script") {
                         ProcessElement = (n, e) => {
@@ -822,7 +822,7 @@
             const string Xml = "<fx:a xmlns:fx=\"urn:namespacetest\"><fx:b>Text</fx:b></fx:a>";
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
@@ -846,12 +846,12 @@
         {
             const string Xml = "<fx:a xmlns:fx=\"urn:namespacetest\"><fx:b>Text</fx:b></fx:a>";
 
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 ["fx"] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
@@ -877,12 +877,12 @@
 
             // XML contains the prefix fx = urn:namespacetest. Our tree has the name space prefix 'ho' for the same URI,
             // which should also work (name spaces are resolved as equal, not the prefix).
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 ["ho"] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("ho", "a") {
                         Nodes = {
@@ -905,12 +905,12 @@
 
             // What happens if we have defined a namespace which the original XML uses something different? The
             // namespace used in the original document will be expected, as there is nothing else to reference to.
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 ["ho"] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
@@ -934,12 +934,12 @@
 
             // What happens if a namespace is defined, but not in the original document, but the prefixes are the same?
             // We will use the namespace in the original XML document, even though there's a namespace collision.
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 ["fx"] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
@@ -962,12 +962,12 @@
             const string Xml = "<a xmlns=\"urn:namespacetest\"><b>Text</b></a>";
 
             // The original XML has a default namespace, which will be considered something else while parsing.
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 ["fx"] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
@@ -989,12 +989,12 @@
             const string Xml = "<fx:a xmlns:fx=\"urn:namespacetest\"><fx:b>Text</fx:b></fx:a>";
 
             // The XML uses a prefix for the namespace. Parsing defined what the default namespace should be.
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 [""] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("", "a") {
                         Nodes = {
@@ -1016,12 +1016,12 @@
             const string Xml = "<fx:a xmlns:fx=\"urn:namespacetest\"><fx:b>Text</fx:b></fx:a>";
 
             // The XML uses a prefix for the namespace. Parsing defined what the default namespace should be.
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 [""] = "urn:namespacetest"
             };
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1043,11 +1043,11 @@
             const string Xml = "<fx:a xmlns:fx=\"urn:namespacetest\"><fx:b><fx:c>Text</fx:c></fx:b></fx:a>";
             string value = null;
 
-            Dictionary<string, string> xmlns = new Dictionary<string, string>() {
+            Dictionary<string, string> xmlns = new() {
                 ["fx"] = "urn:namespacetest"
             };
 
-            XmlTreeReader subReader = new XmlTreeReader() {
+            XmlTreeReader subReader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "b") {
                         Nodes = {
@@ -1059,7 +1059,7 @@
                 }
             };
 
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("fx", "a") {
                         Nodes = {
@@ -1081,7 +1081,7 @@
             const string Xml = "<a><b><c>Text</c></b></a>";
             string value = null;
 
-            XmlTreeReader subReader = new XmlTreeReader() {
+            XmlTreeReader subReader = new() {
                 Nodes = {
                     new XmlTreeNode("b") {
                         Nodes = {
@@ -1093,7 +1093,7 @@
                 }
             };
 
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1116,7 +1116,7 @@
 
             string value = null;
             bool dnode = false;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1147,7 +1147,7 @@
 
             string value = null;
             string valued = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1179,7 +1179,7 @@
 
             string value = null;
             bool dnode = false;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1198,7 +1198,7 @@
                 }
             };
 
-            XmlTreeSettings treeSettings = new XmlTreeSettings() {
+            XmlTreeSettings treeSettings = new() {
                 ThrowOnUnhandledText = false
             };
 
@@ -1213,7 +1213,7 @@
             const string Xml = "<a><b><c>Text</c><d>Text2</d></b></a>";
 
             string value = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1229,7 +1229,7 @@
                 }
             };
 
-            XmlTreeSettings treeSettings = new XmlTreeSettings() {
+            XmlTreeSettings treeSettings = new() {
                 ThrowOnUnknownElement = true
             };
 
@@ -1245,7 +1245,7 @@
             string value = null;
             string unknown = null;
             string valued = null;
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
@@ -1256,7 +1256,7 @@
                                     },
                                 },
                                 ProcessUnknownElement = (n, e) => {
-                                    if (unknown != null) throw new InvalidOperationException();
+                                    if (unknown is not null) throw new InvalidOperationException();
                                     unknown = e.Reader.Name;
                                     valued = e.Reader.ReadElementContentAsString();
                                 }
@@ -1266,7 +1266,7 @@
                 }
             };
 
-            XmlTreeSettings treeSettings = new XmlTreeSettings() {
+            XmlTreeSettings treeSettings = new() {
                 ThrowOnUnknownElement = true
             };
 
@@ -1314,15 +1314,15 @@
         [Test, TestCaseSource(nameof(SkipXmlData))]
         public void SkipInternalElement_Skip(string xml)
         {
-            List<string> values = new List<string>();
-            XmlTreeReader reader = new XmlTreeReader() {
+            List<string> values = new();
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
                             new XmlTreeNode("b") {
                                 ProcessElement = (n, e) => {
                                     string key = e.Reader["id"];
-                                    if (key == null) {
+                                    if (key is null) {
                                         e.Reader.Skip();
                                     }
                                 },
@@ -1347,15 +1347,15 @@
         [TestCaseSource(nameof(SkipXmlData))]
         public void SkipInternalElement_SkipToEndElement(string xml)
         {
-            List<string> values = new List<string>();
-            XmlTreeReader reader = new XmlTreeReader() {
+            List<string> values = new();
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
                             new XmlTreeNode("b") {
                                 ProcessElement = (n, e) => {
                                     string key = e.Reader["id"];
-                                    if (key == null) {
+                                    if (key is null) {
                                         e.Reader.SkipToEndElement();
                                     }
                                 },
@@ -1380,15 +1380,15 @@
         [TestCaseSource(nameof(SkipXmlData))]
         public void SkipInternalElement_ReadInnerXml(string xml)
         {
-            List<string> values = new List<string>();
-            XmlTreeReader reader = new XmlTreeReader() {
+            List<string> values = new();
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("a") {
                         Nodes = {
                             new XmlTreeNode("b") {
                                 ProcessElement = (n, e) => {
                                     string key = e.Reader["id"];
-                                    if (key == null) {
+                                    if (key is null) {
                                         _ = e.Reader.ReadInnerXml();
                                     }
                                 },

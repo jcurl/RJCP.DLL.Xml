@@ -33,7 +33,7 @@
         {
             ThrowHelper.ThrowIfNull(refChild);
             ThrowHelper.ThrowIfNull(newChild);
-            if (refChild.ParentNode == null) return null;
+            if (refChild.ParentNode is null) return null;
 
             return (XmlElement)refChild.ParentNode.InsertAfter(newChild, refChild);
         }
@@ -63,7 +63,7 @@
         {
             ThrowHelper.ThrowIfNull(refChild);
             ThrowHelper.ThrowIfNull(newChild);
-            if (refChild.ParentNode == null) return null;
+            if (refChild.ParentNode is null) return null;
 
             return (XmlElement)refChild.ParentNode.InsertBefore(newChild, refChild);
         }
@@ -77,7 +77,7 @@
         public static XmlElement RemoveElement(this XmlElement oldChild)
         {
             ThrowHelper.ThrowIfNull(oldChild);
-            if (oldChild.ParentNode == null) return null;
+            if (oldChild.ParentNode is null) return null;
 
             return (XmlElement)oldChild.ParentNode.RemoveChild(oldChild);
         }

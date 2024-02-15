@@ -33,8 +33,8 @@
         {
             string path = Path.Combine(Deploy.TestDirectory, "TestResources", "SampleXml.xml");
 
-            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (XmlTextReader xmlReader = new XmlTextReader(fs)) {
+            using (FileStream fs = new(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (XmlTextReader xmlReader = new(fs)) {
                 while (xmlReader.Read()) {
                     switch (xmlReader.NodeType) {
                     case XmlNodeType.Element:

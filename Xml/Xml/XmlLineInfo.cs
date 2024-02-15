@@ -6,7 +6,7 @@
     {
         public XmlLineInfo(IXmlLineInfo xmlObject)
         {
-            if (xmlObject == null) return;
+            if (xmlObject is null) return;
             m_HasLineInfo = xmlObject.HasLineInfo();
             if (m_HasLineInfo) {
                 LineNumber = xmlObject.LineNumber;

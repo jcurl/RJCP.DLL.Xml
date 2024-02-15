@@ -202,7 +202,7 @@
             } catch (XmlException) {
                 throw;
             } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                if (args?.Reader is not null) args.Reader.Throw(ex.Message, ex);
                 throw;
             }
         }
@@ -214,7 +214,7 @@
         protected virtual void OnProcessElement(XmlNodeEventArgs args)
         {
             XmlProcessing handler = ProcessElement;
-            if (handler == null) return;
+            if (handler is null) return;
 
             handler(this, args);
         }
@@ -254,7 +254,7 @@
             } catch (XmlException) {
                 throw;
             } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                if (args?.Reader is not null) args.Reader.Throw(ex.Message, ex);
                 throw;
             }
         }
@@ -271,12 +271,12 @@
         protected virtual bool OnProcessUnknownElement(XmlNodeEventArgs args)
         {
             XmlProcessing handler = ProcessUnknownElement;
-            if (handler != null) {
+            if (handler is not null) {
                 handler(this, args);
                 return true;
             }
 
-            if (args?.TreeSettings != null) {
+            if (args?.TreeSettings is not null) {
                 if (args.TreeSettings.ThrowOnUnknownElement)
                     args.Reader.Throw("Unhandled Element");
             }
@@ -308,9 +308,9 @@
 
                 // Generated can be used to indicate to skip over the unhandled text element.
                 if (!generated) {
-                    if (args.TreeSettings != null) {
+                    if (args.TreeSettings is not null) {
                         XmlTextProcessing handler = ProcessTextElement;
-                        if (handler == null && args.TreeSettings.ThrowOnUnhandledText)
+                        if (handler is null && args.TreeSettings.ThrowOnUnhandledText)
                             args.Reader.Throw("Unhandled Text Element");
                     }
                     if (args.Reader.NodeType == XmlNodeType.Text)
@@ -318,12 +318,12 @@
                 }
 
                 XmlTextEventArgs textArgs =
-                    new XmlTextEventArgs(args.Reader, args.XmlNamespaceManager, args.TreeSettings, args.UserObject, text);
+                    new(args.Reader, args.XmlNamespaceManager, args.TreeSettings, args.UserObject, text);
                 OnProcessTextElement(textArgs);
             } catch (XmlException) {
                 throw;
             } catch (Exception ex) {
-                if (args.Reader != null) args.Reader.Throw(ex.Message, ex);
+                if (args.Reader is not null) args.Reader.Throw(ex.Message, ex);
                 throw;
             }
         }
@@ -335,7 +335,7 @@
         protected virtual void OnProcessTextElement(XmlTextEventArgs args)
         {
             XmlTextProcessing handler = ProcessTextElement;
-            if (handler != null) handler(this, args);
+            if (handler is not null) handler(this, args);
         }
 
         /// <summary>
@@ -358,7 +358,7 @@
             } catch (XmlException) {
                 throw;
             } catch (Exception ex) {
-                if (args?.Reader != null) args.Reader.Throw(ex.Message, ex);
+                if (args?.Reader is not null) args.Reader.Throw(ex.Message, ex);
                 throw;
             }
         }
@@ -370,7 +370,7 @@
         protected virtual void OnProcessEndElement(XmlNodeEventArgs args)
         {
             XmlProcessing handler = ProcessEndElement;
-            if (handler == null) return;
+            if (handler is null) return;
 
             handler(this, args);
         }
@@ -440,8 +440,8 @@
 
         private sealed class XmlContext
         {
-            private readonly Stack<XmlStackEntry> m_XmlStack = new Stack<XmlStackEntry>();
-            private readonly Stack<bool> m_ProcessedText = new Stack<bool>();
+            private readonly Stack<XmlStackEntry> m_XmlStack = new();
+            private readonly Stack<bool> m_ProcessedText = new();
 
             public XmlContext(XmlReader reader, XmlNamespaceManager xmlnsmgr, XmlTreeSettings treeSettings, object userObject)
             {
@@ -495,7 +495,7 @@
             /// </remarks>
             public void Push(XmlTreeNode node, string name, object userObject)
             {
-                XmlStackEntry entry = new XmlStackEntry(node, name, userObject);
+                XmlStackEntry entry = new(node, name, userObject);
                 m_XmlStack.Push(entry);
                 m_ProcessedText.Push(ProcessedText);
                 ProcessedText = false;
@@ -543,7 +543,7 @@
             ThrowHelper.ThrowIfNull(reader);
             ThrowHelper.ThrowIfNull(rootList);
 
-            XmlContext xmlContext = new XmlContext(reader, xmlnsmgr, treeSettings, userObject);
+            XmlContext xmlContext = new(reader, xmlnsmgr, treeSettings, userObject);
             Read(xmlContext, rootList, skip);
 
             if (xmlContext.StackCount != 0)
@@ -560,21 +560,21 @@
                 switch (xmlContext.Reader.NodeType) {
                 case XmlNodeType.Element:
                     string nodeName = GetElementName(xmlContext.Reader, xmlContext.NsMgr);
-                    if (nodeName != null && nodeList.TryGetValue(nodeName, out XmlTreeNode childNode)) {
+                    if (nodeName is not null && nodeList.TryGetValue(nodeName, out XmlTreeNode childNode)) {
                         node = ReadElement(xmlContext, node, childNode, out skip);
-                        if (node != null) nodeList = node.Nodes;
+                        if (node is not null) nodeList = node.Nodes;
                     } else {
                         ReadUnknownElement(xmlContext, node, out skip);
                     }
                     break;
                 case XmlNodeType.Text:
-                    if (node != null) {
+                    if (node is not null) {
                         xmlContext.ProcessedText = true;
                         node.InternalOnProcessTextElement(xmlContext.Args);
                     }
                     break;
                 case XmlNodeType.EndElement:
-                    if (node == null) {
+                    if (node is null) {
                         // We've finished parsing the root node found of this tree. Return, so the user can continue
                         // parsing if this was a subtree.
                         return;
@@ -594,7 +594,7 @@
                             node.InternalOnProcessTextElement(xmlContext.Args, true);
                         node.InternalOnProcessEndElement(xmlContext.Args);
                         node = entry.Node;
-                        if (node == null) {
+                        if (node is null) {
                             // We've finished parsing the root node found of this tree. Return, so the user can
                             // continue parsing if this was a subtree.
                             return;
@@ -611,7 +611,7 @@
 
         private static string GetElementName(XmlReader reader, XmlNamespaceManager xmlnsmgr)
         {
-            if (xmlnsmgr == null) return reader.Name;
+            if (xmlnsmgr is null) return reader.Name;
 
             string prefix = xmlnsmgr.LookupPrefix(reader.NamespaceURI);
 
@@ -628,7 +628,7 @@
 
         private static XmlTreeNode ReadElement(XmlContext xmlContext, XmlTreeNode node, XmlTreeNode childNode, out bool skip)
         {
-            XmlPosition xmlPos = new XmlPosition(xmlContext.Reader);
+            XmlPosition xmlPos = new(xmlContext.Reader);
             object currentObject = xmlContext.Args.UserObject;
             bool isEmpty = xmlContext.Reader.IsEmptyElement;
 
@@ -657,13 +657,13 @@
 
         private static void ReadUnknownElement(XmlContext xmlContext, XmlTreeNode node, out bool skip)
         {
-            if (node == null) {
+            if (node is null) {
                 xmlContext.Reader.Throw("No known root found in XML stream");
                 skip = false;
                 return;
             }
 
-            XmlPosition xmlPos = new XmlPosition(xmlContext.Reader);
+            XmlPosition xmlPos = new(xmlContext.Reader);
             object currentObject = xmlContext.Args.UserObject;
 
             if (node.InternalOnProcessUnknownElement(xmlContext.Args)) {
@@ -746,7 +746,7 @@
                     break;
                 case XmlNodeType.Whitespace:
                 case XmlNodeType.Comment:
-                    if (delta < 0 || delta > 1)
+                    if (delta is < 0 or > 1)
                         xmlContext.Reader.Throw(xmlPos, "Unexpected position after processing element <{0}>, stack depth changed",
                             xmlPos.NodeName);
 
@@ -782,10 +782,10 @@
         /// <returns>An <see cref="XmlNamespaceManager"/> that can be used for mapping top level namespaces.</returns>
         protected static XmlNamespaceManager GetXmlNsMgr(XmlReader reader, IDictionary<string, string> xmlns)
         {
-            if (xmlns == null || xmlns.Count == 0) return null;
+            if (xmlns is null || xmlns.Count == 0) return null;
 
             XmlNamespaceManager xmlnsmgr;
-            if (reader != null) {
+            if (reader is not null) {
                 xmlnsmgr = new XmlNamespaceManager(reader.NameTable);
             } else {
                 // Create a new NameTable, and don't use the one from the XmlReader, so that this name table remains in the

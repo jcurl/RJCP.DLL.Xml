@@ -62,7 +62,7 @@
         [Test]
         public void XmlNodeNormal()
         {
-            XmlTreeNode node = new XmlTreeNode("node");
+            XmlTreeNode node = new("node");
             Assert.That(node.Name, Is.EqualTo("node"));
             Assert.That(node.Prefix, Is.Empty);
             Assert.That(node.LocalName, Is.EqualTo("node"));
@@ -71,7 +71,7 @@
         [Test]
         public void XmlNodeNormalWithPrefix2Char()
         {
-            XmlTreeNode node = new XmlTreeNode("fx:node");
+            XmlTreeNode node = new("fx:node");
             Assert.That(node.Name, Is.EqualTo("fx:node"));
             Assert.That(node.Prefix, Is.EqualTo("fx"));
             Assert.That(node.LocalName, Is.EqualTo("node"));
@@ -80,7 +80,7 @@
         [Test]
         public void XmlNodeNormalWithPrefix1Char()
         {
-            XmlTreeNode node = new XmlTreeNode("x:node");
+            XmlTreeNode node = new("x:node");
             Assert.That(node.Name, Is.EqualTo("x:node"));
             Assert.That(node.Prefix, Is.EqualTo("x"));
             Assert.That(node.LocalName, Is.EqualTo("node"));
@@ -89,7 +89,7 @@
         [Test]
         public void XmlNodeNormalWithLocal2Char()
         {
-            XmlTreeNode node = new XmlTreeNode("x:nd");
+            XmlTreeNode node = new("x:nd");
             Assert.That(node.Name, Is.EqualTo("x:nd"));
             Assert.That(node.Prefix, Is.EqualTo("x"));
             Assert.That(node.LocalName, Is.EqualTo("nd"));
@@ -98,7 +98,7 @@
         [Test]
         public void XmlNodeNormalWithLocal1Char()
         {
-            XmlTreeNode node = new XmlTreeNode("x:n");
+            XmlTreeNode node = new("x:n");
             Assert.That(node.Name, Is.EqualTo("x:n"));
             Assert.That(node.Prefix, Is.EqualTo("x"));
             Assert.That(node.LocalName, Is.EqualTo("n"));
@@ -107,7 +107,7 @@
         [Test]
         public void XmlNodePrefix()
         {
-            XmlTreeNode node = new XmlTreeNode("fx", "node");
+            XmlTreeNode node = new("fx", "node");
             Assert.That(node.Name, Is.EqualTo("fx:node"));
             Assert.That(node.Prefix, Is.EqualTo("fx"));
             Assert.That(node.LocalName, Is.EqualTo("node"));

@@ -147,7 +147,7 @@
 
             protected override void OnProcessEndElement(XmlNodeEventArgs args)
             {
-                if (VolumeExtent.Device == null) {
+                if (VolumeExtent.Device is null) {
                     args.Reader.Throw("Element 'device' missing");
                     return;
                 }
@@ -158,9 +158,9 @@
 
         private static IList<Volume> LoadDisks(string fileName)
         {
-            List<Volume> volumes = new List<Volume>();
+            List<Volume> volumes = new();
 
-            XmlTreeReader reader = new XmlTreeReader() {
+            XmlTreeReader reader = new() {
                 Nodes = {
                     new XmlTreeNode("disks") {
                         Nodes = {
