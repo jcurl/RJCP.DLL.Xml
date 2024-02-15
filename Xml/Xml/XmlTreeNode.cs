@@ -53,8 +53,7 @@
         /// </exception>
         public XmlTreeNode(string nodeName)
         {
-            ThrowHelper.ThrowIfNull(nodeName);
-            if (string.IsNullOrWhiteSpace(nodeName)) throw new ArgumentException("May not be an empty string", nameof(nodeName));
+            ThrowHelper.ThrowIfNullOrWhiteSpace(nodeName);
 
             Name = nodeName;
             int prefixSep = nodeName.IndexOf(':');
@@ -94,8 +93,7 @@
         public XmlTreeNode(string prefix, string localName)
         {
             ThrowHelper.ThrowIfNull(prefix);
-            ThrowHelper.ThrowIfNull(localName);
-            if (string.IsNullOrWhiteSpace(localName)) throw new ArgumentException("May not be an empty string", nameof(localName));
+            ThrowHelper.ThrowIfNullOrWhiteSpace(localName);
 
             if (string.IsNullOrEmpty(prefix)) {
                 Name = localName;
@@ -104,7 +102,7 @@
                 Prefix = string.Empty;
                 LocalName = localName;
             } else {
-                if (string.IsNullOrWhiteSpace(prefix)) throw new ArgumentException("May not be an empty string", nameof(prefix));
+                ThrowHelper.ThrowIfNullOrWhiteSpace(prefix);
 
                 Name = string.Format("{0}:{1}", prefix, localName);
                 if (prefix.Contains(":")) ThrowInvalidNodeName(Name, nameof(prefix));
