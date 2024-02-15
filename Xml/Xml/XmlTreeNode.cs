@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Runtime.CompilerServices;
     using System.Xml;
     using Collections;
 
@@ -64,16 +65,16 @@
 #if NETFRAMEWORK
                 Prefix = nodeName.Substring(0, prefixSep);
                 LocalName = nodeName.Substring(prefixSep + 1);
-                if (LocalName.Contains(":")) ThrowInvalidNodeName(nodeName, nameof(nodeName));
+                if (LocalName.Contains(":")) ThrowInvalidNodeName(nodeName, nodeName);
 #else
                 Prefix = nodeName[..prefixSep];
                 LocalName = nodeName[(prefixSep + 1)..];
-                if (LocalName.Contains(':')) ThrowInvalidNodeName(nodeName, nameof(nodeName));
+                if (LocalName.Contains(':')) ThrowInvalidNodeName(nodeName, nodeName);
 #endif
-                if (string.IsNullOrWhiteSpace(Prefix)) ThrowInvalidNodeName(nodeName, nameof(nodeName));
-                if (string.IsNullOrWhiteSpace(LocalName)) ThrowInvalidNodeName(nodeName, nameof(nodeName));
+                if (string.IsNullOrWhiteSpace(Prefix)) ThrowInvalidNodeName(nodeName, nodeName);
+                if (string.IsNullOrWhiteSpace(LocalName)) ThrowInvalidNodeName(nodeName, nodeName);
             } else {
-                ThrowInvalidNodeName(nodeName, nameof(nodeName));
+                ThrowInvalidNodeName(nodeName, nodeName);
             }
         }
 
@@ -97,7 +98,7 @@
 
             if (string.IsNullOrEmpty(prefix)) {
                 Name = localName;
-                if (localName.Contains(":")) ThrowInvalidNodeName(Name, nameof(localName));
+                if (localName.Contains(":")) ThrowInvalidNodeName(Name, localName);
 
                 Prefix = string.Empty;
                 LocalName = localName;
@@ -105,18 +106,19 @@
                 ThrowHelper.ThrowIfNullOrWhiteSpace(prefix);
 
                 Name = string.Format("{0}:{1}", prefix, localName);
-                if (prefix.Contains(":")) ThrowInvalidNodeName(Name, nameof(prefix));
-                if (localName.Contains(":")) ThrowInvalidNodeName(Name, nameof(localName));
+                if (prefix.Contains(":")) ThrowInvalidNodeName(Name, prefix);
+                if (localName.Contains(":")) ThrowInvalidNodeName(Name, localName);
 
                 Prefix = prefix;
                 LocalName = localName;
             }
         }
 
-        private static void ThrowInvalidNodeName(string nodeName, string argument)
+        private static void ThrowInvalidNodeName(string nodeName, string argument, [CallerArgumentExpression(nameof(argument))] string paramName = null)
         {
-            string message = string.Format("Invalid Node Name: '{0}'", nodeName);
-            throw new ArgumentException(message, argument);
+            if (ReferenceEquals(nodeName, argument))
+                throw new ArgumentException($"Invalid Node Tag: '{nodeName}'", paramName);
+            throw new ArgumentException($"Invalid Node Tag: '{nodeName}', {paramName} having '{argument}'", paramName);
         }
 
         /// <summary>
