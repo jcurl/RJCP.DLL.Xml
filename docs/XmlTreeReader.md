@@ -1,4 +1,4 @@
-# XmlTreeReader
+# XmlTreeReader <!-- omit in toc -->
 
 The `XmlTreeReader` reads XML files with a small memory footprint, based on a
 tree structure in code that maps similarly to the tree structure of an XML being
@@ -8,40 +8,40 @@ The core implementation uses the `System.Xml.XmlReader` class to do the reading,
 so only the elements being read are in memory at the time, and not the entire
 XML file.
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
-* 1.0 Getting Started
-  * 1.1 Simple Usage of the XmlTreeReader without Namespaces
-* 2.0 Parsing a XML Tree
-  * 2.1 Defining the Tree Structure
-  * 2.2 Information Provided in Callbacks
-  * 2.3 Parsing Known Elements
-    * 2.3.1 Stack Behaviour of UserObject
-  * 2.4 Parsing Unknown Elements
-  * 2.5 Parsing Text Elements
-  * 2.6 Parsing CDATA
-  * 2.7 Parsing the End of an Element
-* 3.0 XmlTreeSettings for Reader Behavior
-  * 3.1 Default Behavior
-  * 3.2 Throwing an Exception on Unhandled Elements
-  * 3.3 Throwing an Exception on Unhandled Text
-* 4.0 Parsing Sub-Trees
-  * 4.1 Manually Skipping over a Section in the ProcessElement
-  * 4.2 Using XmlReader.ReadSubTree
-  * 4.3 Using XmlTreeReader.Read for Subtrees
-  * 4.4 Reading Subtrees and Passing the XmlTreeSettings
-* 5.0 Managing Namespaces
-  * 5.1 Defining and Using Namespaces in Code
-  * 5.2 Prefixes without Namespaces
-  * 5.3 The Default Namespace
-    * 5.3.1 The Default Namespace as Empty
-  * 5.4 Undefined Namespaces
-    * 5.4.1 Prefix Collisions
-  * 5.5 Namespaces and Sub-Trees
+- [1. Getting Started](#1-getting-started)
+  - [1.1. Simple Usage of the XmlTreeReader without Namespaces](#11-simple-usage-of-the-xmltreereader-without-namespaces)
+- [2. Parsing a XML Tree](#2-parsing-a-xml-tree)
+  - [2.1. Defining the Tree Structure](#21-defining-the-tree-structure)
+  - [2.2. Information Provided in Callbacks](#22-information-provided-in-callbacks)
+  - [2.3. Parsing Known Elements](#23-parsing-known-elements)
+    - [2.3.1. Stack Behaviour of UserObject](#231-stack-behaviour-of-userobject)
+  - [2.4. Parsing Unknown Elements](#24-parsing-unknown-elements)
+  - [2.5. Parsing Text Elements](#25-parsing-text-elements)
+  - [2.6. Parsing CDATA](#26-parsing-cdata)
+  - [2.7. Parsing the End of an Element](#27-parsing-the-end-of-an-element)
+- [3. XmlTreeSettings for Reader Behavior](#3-xmltreesettings-for-reader-behavior)
+  - [3.1. Default Behavior](#31-default-behavior)
+  - [3.2. Throwing an Exception on Unhandled Elements](#32-throwing-an-exception-on-unhandled-elements)
+  - [3.3. Throwing an Exception on Unhandled Text](#33-throwing-an-exception-on-unhandled-text)
+- [4. Parsing Sub-Trees](#4-parsing-sub-trees)
+  - [4.1. Manually Skipping over a Section in the ProcessElement](#41-manually-skipping-over-a-section-in-the-processelement)
+  - [4.2. Using XmlReader.ReadSubTree](#42-using-xmlreaderreadsubtree)
+  - [4.3. Using XmlTreeReader.Read for Subtrees](#43-using-xmltreereaderread-for-subtrees)
+  - [4.4. Reading Subtrees and Passing the XmlTreeSettings](#44-reading-subtrees-and-passing-the-xmltreesettings)
+- [5. Managing Namespaces](#5-managing-namespaces)
+  - [5.1. Defining and Using Namespaces in Code](#51-defining-and-using-namespaces-in-code)
+  - [5.2. Prefixes without Namespaces](#52-prefixes-without-namespaces)
+  - [5.3. The Default Namespace](#53-the-default-namespace)
+    - [5.3.1. The Default Namespace as Empty](#531-the-default-namespace-as-empty)
+  - [5.4. Undefined Namespaces](#54-undefined-namespaces)
+    - [5.4.1. Prefix Collisions](#541-prefix-collisions)
+  - [5.5. Namespaces and Sub-Trees](#55-namespaces-and-sub-trees)
 
-## 1.0 Getting Started
+## 1. Getting Started
 
-### 1.1 Simple Usage of the XmlTreeReader without Namespaces
+### 1.1. Simple Usage of the XmlTreeReader without Namespaces
 
 Let's start with a simple XML file:
 
@@ -85,9 +85,9 @@ the `e.UserObject`. The `u.UserObject` is propagated through to the
 sub-elements. This way, it is possible to use the recursive tree structure to
 parse XML datastructures simply.
 
-## 2.0 Parsing a XML Tree
+## 2. Parsing a XML Tree
 
-### 2.1 Defining the Tree Structure
+### 2.1. Defining the Tree Structure
 
 The root of the XML tree is defined by the `XmlTreeReader`. It derives from the
 `XmlTreeNode`. The `XmlTreeReader` defines the ability to read XML, the
@@ -102,16 +102,16 @@ events, to allow in-line in C# with the simplified list initialization.
 
 The callbacks are:
 
-* `XmlTreeNode.ProcessElement`: Used when an element is parsed, such as
+- `XmlTreeNode.ProcessElement`: Used when an element is parsed, such as
   `<root>`. In this callback, one can parse the attributes associated with the
   element.
-* `XmlTreeNode.ProcessEndElement`: Used when the end tag for the element is
+- `XmlTreeNode.ProcessEndElement`: Used when the end tag for the element is
   parsed, or called after the `ProcessElement` if that element is empty.
-* `XmlTreeNode.ProcessUnknownElement`: Called where there's no `XmlTreeNode` for
+- `XmlTreeNode.ProcessUnknownElement`: Called where there's no `XmlTreeNode` for
   that element defined in the `Nodes` collection for the current node.
-* `XmlTreeNode.ProcessTextElement`: Get the text content of the current element.
+- `XmlTreeNode.ProcessTextElement`: Get the text content of the current element.
 
-### 2.2 Information Provided in Callbacks
+### 2.2. Information Provided in Callbacks
 
 In all the callbacks, the object passed is the `XmlNodeEventArgs`. This object
 contains the current `XmlReader` object `Reader` and any user data as
@@ -125,7 +125,7 @@ current depth while parsing the XML Tree structure. If the `UserObject` must be
 stored, make a copy of that reference explicitly, and not the
 `XmlNodeEventArgs`.
 
-### 2.3 Parsing Known Elements
+### 2.3. Parsing Known Elements
 
 Known elements are those which are defined in the current node's `Nodes`
 collection. These are generally the interesting nodes that your application
@@ -133,11 +133,11 @@ wants to read and know about.
 
 Operations typically done in this callback are to:
 
-* Read the attributes for the current element;
-* Create new datastructures, and allow that to be passed to elements that are
+- Read the attributes for the current element;
+- Create new datastructures, and allow that to be passed to elements that are
   under this current element.
 
-#### 2.3.1 Stack Behaviour of UserObject
+#### 2.3.1. Stack Behaviour of UserObject
 
 Parsing the XML Tree structure is done using a depth first search algorithm,
 which is stack based. At each Element of the XML tree, the
@@ -213,20 +213,20 @@ through the tree allows for the object to be the correct value.
 
 After processing an element, it is expected that:
 
-* Nothing has been read, so the cursor has not changed; or
-* If data was read, the cursor is at:
-  * the beginning of the next Element at the same depth of the element when
+- Nothing has been read, so the cursor has not changed; or
+- If data was read, the cursor is at:
+  - the beginning of the next Element at the same depth of the element when
     called; or
-  * the end of the parent element; or
-  * the end of the current element (and the name is the same); or
-  * There is whitespace, which will be skipped over, until an element/end
+  - the end of the parent element; or
+  - the end of the current element (and the name is the same); or
+  - There is whitespace, which will be skipped over, until an element/end
     element is reached.
 
 Stack checking is performed while processing the elements. An exception will be
 raised if the current position of the `XmlReader` doesn't match what is
 expected.
 
-### 2.4 Parsing Unknown Elements
+### 2.4. Parsing Unknown Elements
 
 When parsing unknown elements, the callback `ProcessUnknownElement` for the
 current node will be called.
@@ -241,7 +241,7 @@ Processing an unknown element is similar to processing an element. After
 processing an unknown element, the same rules apply as for processing an
 element.
 
-### 2.5 Parsing Text Elements
+### 2.5. Parsing Text Elements
 
 The callback `ProcessTextElement` is provided to allow a simple parse of the
 text element present. The text element is `e.Reader.Value`.
@@ -261,7 +261,7 @@ ProcessElement = (n, e) => {
 }
 ```
 
-### 2.6 Parsing CDATA
+### 2.6. Parsing CDATA
 
 To read CDATA, one must use the `ProcessElement` callback.
 
@@ -301,16 +301,16 @@ Reading that file would result in the content of `value` to contain the string
   ¶
 ```
 
-### 2.7 Parsing the End of an Element
+### 2.7. Parsing the End of an Element
 
 The end of an element is the end tag in XML, e.g. `</root>`. This element
 indicates that the parsing is complete. The `XmlNodeEventArgs.UserObject` given
 as part of `ProcessEndElement` is the value of the user object that was present
 on the exit of the previous call to `ProcessElement`.
 
-## 3.0 XmlTreeSettings for Reader Behavior
+## 3. XmlTreeSettings for Reader Behavior
 
-### 3.1 Default Behavior
+### 3.1. Default Behavior
 
 The most common use case is to have an XML document without an associated XML
 schema defining the structure of the input document. This makes it easy to use
@@ -333,7 +333,7 @@ new XmlTreeSettings() {
 }
 ```
 
-### 3.2 Throwing an Exception on Unhandled Elements
+### 3.2. Throwing an Exception on Unhandled Elements
 
 If it is desired that an exception be automatically thrown when an unknown
 element is raised, set the `ThrowOnUnknownElement` to `true`. If an
@@ -344,7 +344,7 @@ that object, and the delegate `ProcessUnknownElement` is not defined, an
 This allows to throw an exception, and explicitly define the delegate where the
 exception should not be raised.
 
-### 3.3 Throwing an Exception on Unhandled Text
+### 3.3. Throwing an Exception on Unhandled Text
 
 The default behavior is to throw an exception `XmlException` when an
 `XmlNodeType.Text` is found where that node does not have a delegate for
@@ -355,7 +355,7 @@ If the `ProcessElement` delegate reads the current nodes text with
 `e.Reader.ReadContentElementAsString()` or similar, then this will skip over the
 text element and an exception will not be raised as expected.
 
-## 4.0 Parsing Sub-Trees
+## 4. Parsing Sub-Trees
 
 Each element of an XML document may be seen as the root of a new tree. The
 recursive nature of XML makes it ideal for delegating functionality for reading
@@ -371,7 +371,7 @@ It could be that a portion of the XML is read, and that the programmer has no
 control over the function that must read this code, so it is not possible to
 implement that subtree inside the definition of the `XmlTreeReader`.
 
-### 4.1 Manually Skipping over a Section in the ProcessElement
+### 4.1. Manually Skipping over a Section in the ProcessElement
 
 As the basics, when passing control to another function to continue reading the
 `XmlReader` it is seen by the current `XmlTreeReader` as if the current element
@@ -406,7 +406,7 @@ Both cases are handled in the `XmlTreeReader` and are equivalent in code, as the
 case when `GetPosition()` is not supported raises an exception and parsing
 cannot continue.
 
-### 4.2 Using XmlReader.ReadSubTree
+### 4.2. Using XmlReader.ReadSubTree
 
 If an implementation already exists that takes an `XmlReader` to parse through
 an XML document, it can be given the results of the `XmlReader.ReadSubTree()`
@@ -465,7 +465,7 @@ It is important that the `OtherFunc` read until the end element for the current
 node, or one step immediately after (to the element of the next node, or the end
 element of the parent node).
 
-### 4.3 Using XmlTreeReader.Read for Subtrees
+### 4.3. Using XmlTreeReader.Read for Subtrees
 
 A design may split parsing a tree into multiple `XmlTreeReader` objects. There
 are two mechanisms to parsing a subtree, with subtle differences in the way that
@@ -599,7 +599,7 @@ Note, the example above wouldn't work if it were called with
 able to get the current element name `reader.Value` as the type would not be
 `XmlNodeType.Element`, but is instead `XmlNodeType.None`.
 
-### 4.4 Reading Subtrees and Passing the XmlTreeSettings
+### 4.4. Reading Subtrees and Passing the XmlTreeSettings
 
 When reading sub-trees, the current `XmlTreeSettings` are part of the event being handled.
 A copy of the `XmlTreeSettings` is provided, that it can be given to other read methods.
@@ -636,7 +636,7 @@ readerRoot.Read(new StringReader(xml), xmlTreeSettings);
 In the example above, the root tree ignores unhandled text, and propagates these
 settings to reading the subtree also through the `e.TreeSettings` property.
 
-## 5.0 Managing Namespaces
+## 5. Managing Namespaces
 
 XML has the concept of namespaces for XML elements by defining the `xmlns` tag
 and the prefix `xmlns:prefix`, followed by a namespace string. Two XML documents
@@ -672,7 +672,7 @@ only would result in the first and second document being incompatible, and
 possibly believing the first and third are identical, which would be considered
 a violation of the XML specification.
 
-### 5.1 Defining and Using Namespaces in Code
+### 5.1. Defining and Using Namespaces in Code
 
 When creating an XML parser that uses namespaces, it is necessary to define the
 namespace for each element in the `XmlTreeReader` tree structure. Not doing so
@@ -752,7 +752,7 @@ the namespace is not the same as required for reading:
 </fx:a>
 ```
 
-### 5.2 Prefixes without Namespaces
+### 5.2. Prefixes without Namespaces
 
 If a dictionary is not provided to the `Read` function for reading the XML, all
 comparisons are made using the `XmlReader.Name` field, which is a combination of
@@ -782,7 +782,7 @@ match here.
 
 This isn't conformant when reading XML.
 
-### 5.3 The Default Namespace
+### 5.3. The Default Namespace
 
 XML has the concept of a default namespace. The default namespace used in the
 XML document is not the same as the default namespace used when reading the XML
@@ -813,7 +813,7 @@ XmlTreeReader reader = new XmlTreeReader() {
 reader.Read(new StringReader(xml), xmlns);
 ```
 
-#### 5.3.1 The Default Namespace as Empty
+#### 5.3.1. The Default Namespace as Empty
 
 Similarly, some code might require the default namespace being empty. When
 providing a namespace mapping, it is required that the default empty namespace
@@ -827,7 +827,7 @@ Dictionary<string, string> xmlns = new Dictionary<string, string>() {
 };
 ```
 
-### 5.4 Undefined Namespaces
+### 5.4. Undefined Namespaces
 
 It may be that an XML file is being read that contains elements with namespaces
 that is not foreseen in the original code.
@@ -877,7 +877,7 @@ So if the XML being parsed is:
 
 then `baz:a` will be the node sought for as a child to `fx:a`.
 
-#### 5.4.1 Prefix Collisions
+#### 5.4.1. Prefix Collisions
 
 When a dictionary of namespaces are provided when parsing the XML document with
 `XmlTreeReader`, any unknown namespace in the original document is necessarily
@@ -916,7 +916,7 @@ The code is looking for elements in the namespace `urn:namespacetest`, where the
 elements in the original XML belong to the namespace `urn:other` and is thus
 different.
 
-### 5.5 Namespaces and Sub-Trees
+### 5.5. Namespaces and Sub-Trees
 
 When parsing subtrees, the namespace given for the root parsing is not automatically
 passed to the subtree. The namespace must be explicitly provided to work.
