@@ -116,7 +116,8 @@
         }
 
         [DoesNotReturn]
-        private static void ThrowInvalidNodeName(string nodeName, string argument, [CallerArgumentExpression("argument")] string paramName = null)
+        private static void ThrowInvalidNodeName(string nodeName, string argument,
+            [CallerArgumentExpression(nameof(argument))] string paramName = null)
         {
             if (ReferenceEquals(nodeName, argument))
                 throw new ArgumentException($"Invalid Node Tag: '{nodeName}'", paramName);
