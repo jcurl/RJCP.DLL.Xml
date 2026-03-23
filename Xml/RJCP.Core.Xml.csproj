@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net40;net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net40;net6.0;net8.0;net10.0</TargetFrameworks>
     <OutputType>Library</OutputType>
     <Configurations>Debug;Release</Configurations>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -12,7 +12,7 @@
     <RootNamespace>RJCP.Core</RootNamespace>
 
     <Authors>Jason Curl</Authors>
-    <Copyright>(C) 2019-2024, Jason Curl</Copyright>
+    <Copyright>(C) 2019-2026, Jason Curl</Copyright>
     <Company></Company>
     <PackageId>RJCP.Core.Xml</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -20,7 +20,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/jcurl/RJCP.DLL.Xml</PackageProjectUrl>
     <Description>.NET library for useful XML functions.</Description>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
 
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>

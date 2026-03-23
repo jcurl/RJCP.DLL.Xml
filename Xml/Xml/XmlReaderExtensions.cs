@@ -1,7 +1,6 @@
 ﻿namespace RJCP.Core.Xml
 {
     using System;
-    using System.Text;
     using System.Xml;
 
     /// <summary>

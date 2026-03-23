@@ -56,7 +56,7 @@
             Assert.That(rootRead, Is.EqualTo(1));
             Assert.That(rootText, Is.EqualTo(1));
             Assert.That(rootFinished, Is.EqualTo(1));
-            Assert.That(rootUnknown, Is.EqualTo(0));
+            Assert.That(rootUnknown, Is.Zero);
             Assert.That(rootValue, Is.Empty);
         }
 
@@ -101,12 +101,12 @@
             Assert.That(rootRead, Is.EqualTo(1));
             Assert.That(rootText, Is.EqualTo(1));
             Assert.That(rootFinished, Is.EqualTo(1));
-            Assert.That(rootUnknown, Is.EqualTo(0));
+            Assert.That(rootUnknown, Is.Zero);
             Assert.That(rootValue, Is.Empty);
             Assert.That(subRead, Is.EqualTo(1));
             Assert.That(subText, Is.EqualTo(1));
             Assert.That(subFinished, Is.EqualTo(1));
-            Assert.That(subUnknown, Is.EqualTo(0));
+            Assert.That(subUnknown, Is.Zero);
             Assert.That(subValue, Is.Empty);
         }
 
@@ -458,8 +458,8 @@
             Assert.That(rootProcessEndElement, Is.EqualTo(1));
             Assert.That(rootSubProcessElement, Is.EqualTo(2));
             Assert.That(rootSubProcessEndElement, Is.EqualTo(2));
-            Assert.That(rootSubXProcessElement, Is.EqualTo(0));        // Skipped by readerSub.ReadSubTree()
-            Assert.That(rootSubXProcessEndElement, Is.EqualTo(0));     // Skipped by readerSub.ReadSubTree()
+            Assert.That(rootSubXProcessElement, Is.Zero);        // Skipped by readerSub.ReadSubTree()
+            Assert.That(rootSubXProcessEndElement, Is.Zero);     // Skipped by readerSub.ReadSubTree()
             Assert.That(subProcessElement, Is.EqualTo(2));             // Tag is processed once per tree
             Assert.That(subProcessEndElement, Is.EqualTo(2));          // Tag is processed once per tree
             Assert.That(subXProcessElement, Is.EqualTo(2));
